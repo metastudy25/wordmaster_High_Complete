@@ -1,0 +1,1146 @@
+<html lang="ko"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f4f7f9">
+    <title>이든_워드마스터 수능 2000</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { font-family: 'Pretendard', sans-serif; background-color: #e9ecef; margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; height: 100dvh; overflow: hidden; user-select: none; }
+        
+        /* 반응형 컨테이너 (모바일~PC 자연스러운 대응) */
+        .app-container { width: 100%; max-width: 900px; height: 100dvh; background-color: #f4f7f9; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0,0,0,0.15); overflow-y: auto; overflow-x: hidden; position: relative; transition: all 0.3s ease; }
+
+        /* 상단 패널 */
+        .top-panel { background: white; padding: 12px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); z-index: 10; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; align-items: center;}
+        .control-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; width: 100%; max-width: 850px;}
+        .control-row select { flex: 1; min-width: 90px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; font-weight: bold; color: #222; }
+        
+        .lang-options { display: flex; justify-content: center; gap: 12px; font-size: 14px; font-weight: 800; color: #1a5f7a; white-space: nowrap; flex: 1; min-width: 140px;}
+        .lang-options label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .lang-options input[type="radio"] { transform: scale(1.3); margin-right: 4px; }
+        
+        .panel-btns { display: flex; justify-content: center; gap: 8px; flex: 1; min-width: 140px;}
+        .btn-panel { flex: 1; background: #95a5a6; color: white; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; line-height: 1.3; font-size: 13px; white-space: nowrap; transition: 0.2s;}
+        .btn-panel:active { transform: scale(0.95); }
+        .btn-panel.primary { background: #3498db; }
+        .btn-panel.upload { background: #8e44ad; } 
+        
+        /* 상단 결과 전송 버튼 추가 스타일 */
+        .btn-submit-top { background: #e67e22 !important; border: 1px solid #d35400; animation: pulse 2s infinite; }
+
+        /* 상태 정보 */
+        .status-header { padding: 12px 20px; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; gap: 10px; flex-shrink: 0;}
+        .mode-title { font-size: 18px; font-weight: 900; color: #222; text-align: center; margin: 0; }
+        .status-info-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .badge-group { display: flex; gap: 8px; align-items: center; }
+        
+        .progress-badge { font-size: 14px; font-weight: 800; padding: 6px 12px; border-radius: 15px; white-space: nowrap; transition: all 0.3s ease; }
+        .badge-default { background: #e8f4fd; color: #3498db; }
+        
+        /* 2차 학습 회독 뱃지 강조 (가독성 및 시각적 균형) */
+        .badge-cycle-1, .badge-cycle-2, .badge-cycle-3 {
+            font-size: 18px !important;
+            font-weight: 900 !important;
+            padding: 8px 20px !important;
+            border-radius: 30px !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            border: 2px solid #ffffff;
+            letter-spacing: 1px;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .badge-cycle-1 { background: #3b82f6 !important; } 
+        .badge-cycle-2 { background: #8b5cf6 !important; } 
+        .badge-cycle-3 { background: #ef4444 !important; } 
+        .badge-cycle-4 { background: #1e293b !important; color: #fff !important; font-size: 16px !important; } 
+
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .stopwatch-badge { font-size: 16px; font-weight: 900; background: #fff3e0; color: #d35400; padding: 6px 14px; border-radius: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); letter-spacing: 1px; white-space: nowrap;}
+
+        /* 대시보드 */
+        .dashboard { display: flex; justify-content: space-between; gap: 8px; width: 92%; max-width: 850px; margin: 0 auto 10px auto; flex-shrink: 0;}
+        .box-status { flex: 1; background: white; padding: 8px 0; border-radius: 10px; text-align: center; font-size: 13px; font-weight: bold; box-shadow: 0 1px 5px rgba(0,0,0,0.06); transition: all 0.2s ease;}
+        .box-left { color: #ff5252; border-bottom: 4px solid #ff5252; }
+        .box-mid { color: #f39c12; border-bottom: 4px solid #f39c12; }
+        .box-right { color: #2ed573; border-bottom: 4px solid #2ed573; }
+
+        .timer-container { width: 92%; max-width: 850px; height: 5px; background-color: #ddd; border-radius: 3px; overflow: hidden; display: none; margin: 0 auto 10px auto; flex-shrink: 0;}
+        .timer-bar { height: 100%; width: 100%; background-color: #ff4d4d; }
+
+        /* === 카드 영역 === */
+        .main-area-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 10px 15px; box-sizing: border-box; position: relative; min-height: 280px;}
+        .main-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; perspective: 1000px; }
+        
+        /* 카드 너비 최적화 (PC에서도 지나치게 커지지 않도록) */
+        .swipe-wrapper { width: 95%; max-width: 550px; cursor: grab; position: relative; z-index: 5; touch-action: none; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; margin: 0 auto; }
+        .swipe-wrapper:active { cursor: grabbing; }
+        
+        .card { width: 100%; aspect-ratio: 1.2 / 1.0; max-height: 55dvh; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border 0.3s; transform-style: preserve-3d; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); border: 2px solid transparent; background: white; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        
+        .cycle-1 .card { border-color: #3498db; box-shadow: 0 10px 30px rgba(52, 152, 219, 0.25); }
+        .cycle-2 .card { border-color: #9b59b6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.25); }
+        .cycle-3 .card { border-color: #e74c3c; box-shadow: 0 10px 30px rgba(231, 76, 60, 0.25); }
+        .cycle-4 .card { border-color: #2c3e50; box-shadow: 0 10px 30px rgba(44, 62, 80, 0.25); }
+
+        .card-face { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 18px; background: white; padding: 20px; box-sizing: border-box; text-align: center; }
+        .card-back { transform: rotateY(180deg); background-color: #f0f8ff; }
+        
+        .text-container { width: 100%; height: 75%; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box; word-break: keep-all; gap: 8px;}
+        .word-text { font-weight: 800; line-height: 1.3; transition: font-size 0.1s ease; text-align: center; width: 100%; margin: 0;}
+
+        .guide-text { font-size: 13px; color: #bbb; position: absolute; bottom: 15px; transition: 0.3s; }
+        .academy-logo { margin-top: 15px; font-size: 15px; font-weight: 900; color: #b2bec3; letter-spacing: 2px; text-align: center; flex-shrink: 0; padding-bottom: 10px;}
+
+        .swipe-info-guide { width: 100%; text-align: center; padding: 12px 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; font-size: 13px; font-weight: bold; flex-shrink: 0;}
+        .guide-item { display: flex; flex-direction: column; gap: 4px; }
+
+        /* === 모달 === */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: rgba(0,0,0,0.75); z-index: 100; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 460px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4); max-height: 90dvh; display: flex; flex-direction: column; overflow-y: auto;}
+        
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .input-group input { padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; text-align: center; font-family: 'Pretendard'; }
+        
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 15px; color: white; transition: 0.2s; flex-shrink: 0;}
+        .btn-blue { background: #3498db; }
+        .btn-orange { background: #f39c12; }
+        .btn-green { background: #2ed573; }
+        .btn-gray { background: #95a5a6; margin-top: 10px;}
+        .btn-dark { background: #34495e; }
+        .btn-submit { background: #e67e22; border: 2px solid #d35400; box-shadow: 0 4px 10px rgba(211,84,0,0.3); animation: pulse 2s infinite; margin-top: 10px;}
+        .btn-admin { background: #8e44ad; } 
+        .btn-danger { background-color: #e74c3c !important; color: #ffffff !important; margin-top: 10px;}
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        
+        .hidden { display: none !important; }
+        .textbook-title { font-size: 20px; font-weight: 900; color: #1a5f7a; margin-bottom: 15px; background: #e8f4fd; padding: 10px; border-radius: 10px; }
+
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; flex: 1; min-height: 200px; border-radius: 8px; border: 1px solid #eee;}
+        .history-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; white-space: nowrap; }
+        .history-table th, .history-table td { border: 1px solid #ddd; padding: 10px 5px; vertical-align: middle; }
+        .history-table th { background: #fdf2e9; color: #333; font-weight: bold; position: sticky; top: 0; font-size: 13px; z-index: 2;}
+        .history-table td { color: #555; }
+        .wrong-words-cell { max-height: 80px; overflow-y: auto; display: block; text-align: left; font-size: 11px; line-height: 1.4; padding: 6px; background: #fffcfc;}
+
+        /* PC, 태블릿 완벽 대응 반응형 미디어 쿼리 추가 */
+        @media (min-width: 768px) {
+            body { background-color: #cbd5e1; align-items: center; } 
+            .app-container { max-width: 1000px; height: 96dvh; margin-top: 2dvh; border-radius: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.3); }
+            .top-panel, .status-header, .dashboard, .timer-container { padding: 15px 30px; }
+            .control-row select { font-size: 15px; padding: 8px 12px; }
+            .btn-panel { font-size: 14px; padding: 10px 14px; }
+            .mode-title { font-size: 24px; }
+            .box-status { font-size: 16px; padding: 15px 0; }
+            .swipe-info-guide { padding: 15px 0; font-size: 15px; }
+            .card { max-height: 60dvh; } 
+            .academy-logo { font-size: 14px; padding-bottom: 20px; }
+        }
+        @media (max-height: 650px), (orientation: landscape) {
+            .top-panel { padding: 8px 10px; gap: 6px; }
+            .control-row select { padding: 4px 6px; font-size: 12px; }
+            .card { max-height: 50dvh; } 
+        }
+    </style>
+</head>
+<body>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<div class="app-container">
+    <input type="file" id="csvFileInput" accept=".csv" onchange="handleCsvUpload(event)" style="display:none;">
+
+    <div id="modalOverlay" class="modal-overlay" style="display: flex;">
+        
+        <div id="adminModal" class="modal-content">
+            <h2 style="color:#8e44ad; margin-top:0;">Master 관리자 모드</h2>
+            <p style="font-size: 14px; color: #666;">배포할 교재 이름과 CSV를 넣어주세요.</p>
+            <input type="text" id="adminBookName" placeholder="교재 제목 입력 (예: 워드마스터 1-10)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #8e44ad; margin-bottom: 15px; text-align: center; box-sizing: border-box;">
+            <button class="btn-main btn-admin" onclick="triggerCsvUpload()">1. CSV 단어장 업로드</button>
+            <button class="btn-main btn-blue" id="genFileBtn" onclick="generateStudentFile()" style="opacity: 1;">2. 학생용 파일 제작 &amp; 다운로드</button>
+            <p id="uploadStatus" style="font-size: 12px; color: #e74c3c; margin-top: 10px;">파일을 업로드하면 버튼이 활성화됩니다.</p>
+        </div>
+
+        <div id="startModal" class="modal-content hidden">
+            <div id="studentBookTitle" class="textbook-title">교재명이 표시됩니다</div>
+            
+            <div id="loginSection">
+                <div class="input-group">
+                    <input type="number" id="seatInput" placeholder="좌석번호" min="1" max="99">
+                    <input type="text" id="nameInput" placeholder="학생 이름 (예: 권다은)">
+                    <input type="password" id="pwInput" placeholder="시트 비밀번호 (예: 129200)">
+                </div>
+                <button id="loginBtn" class="btn-main btn-blue" onclick="performLogin()">로그인하여 시작하기</button>
+            </div>
+
+            <div id="menuSection" class="hidden">
+                <div style="background:#fdf2e9; padding:15px; border-radius:12px; margin-bottom:15px; text-align:left; font-size:14px; font-weight: bold; color: #1a5f7a;">
+                    <label style="display: flex; align-items: center; margin-bottom: 8px;"><input type="radio" name="modalLang" value="en2ko" checked="" style="transform: scale(1.4); margin-right: 8px;"> 영어 ➔ 한글 연습</label>
+                    <label style="display: flex; align-items: center;"><input type="radio" name="modalLang" value="ko2en" style="transform: scale(1.4); margin-right: 8px;"> 한글 ➔ 영어 연습</label>
+                </div>
+                
+                <div id="authBtnGroup" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <button class="btn-main btn-blue" style="margin:0; font-size:14px; padding:15px 5px;" onclick="initApp(1, true)">1차 (단어 익히기)</button>
+                    <button class="btn-main btn-orange" style="margin:0; font-size:14px; padding:15px 5px;" onclick="initApp(2, true)">2차 (박스 분류)</button>
+                    <button class="btn-main btn-green" style="margin:0; font-size:14px; padding:15px 5px;" onclick="initApp(3, true)">3차 (3초 테스트)</button>
+                    <button class="btn-main btn-dark" style="margin:0; font-size:14px; padding:15px 5px;" onclick="startMode4()">4차 (오답 복습)</button>
+                </div>
+                
+                <div style="display:flex; flex-direction:column; gap: 10px; margin-top: 20px;">
+                    <button class="btn-main btn-submit" style="margin:0; padding:16px; font-size:16px;" onclick="sendDataToGoogleForm()">📊 학습 결과 원장님께 전송하기</button>
+                    <button class="btn-main" style="background:#2c3e50; margin:0; padding:12px; font-size:14px;" onclick="showGuideModal()">📱 홈 화면에 앱 만들기 (가이드)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="guideModal" class="modal-content hidden">
+            <h2 style="color:#2c3e50; margin-top:0; font-size: 22px;">📱 바탕화면 바로가기 만들기</h2>
+            <div style="text-align: left; font-size: 14px; color: #333; line-height: 1.6; background:#f4f7f9; padding:15px; border-radius:12px; margin-bottom:15px;">
+                <p style="margin-top:0;">매번 카톡에서 열 필요 없이 바탕화면에 <b>바로가기 아이콘</b>을 설치할 수 있습니다.</p>
+                <hr style="border:0; border-top:1px solid #ddd; margin:10px 0;">
+                <p style="color:#1a5f7a; font-weight:bold;">🍎 아이폰 (Safari) 사용자</p>
+                <p style="margin:5px 0 10px 0;">1. 화면 하단의 <b>[공유하기(네모와 화살표)]</b> 아이콘 클릭<br>
+                2. 메뉴를 위로 올려 <b>[홈 화면에 추가]</b> 클릭</p>
+                
+                <p style="color:#1a5f7a; font-weight:bold;">🤖 안드로이드 (Chrome) 사용자</p>
+                <p style="margin:5px 0 0 0;">1. 화면 우측 상단의 <b>[점 3개(⋮)]</b> 메뉴 클릭<br>
+                2. <b>[홈 화면에 추가]</b> 클릭</p>
+            </div>
+            <button class="btn-main btn-gray" onclick="closeGuideModal()">뒤로 가기</button>
+        </div>
+
+        <div id="resultModal" class="modal-content hidden">
+            <h2 id="resultTitle" style="font-size: 24px;">단계 완료!</h2>
+            <div style="display: flex; justify-content: space-around; margin: 15px 0; font-weight: bold; font-size: 15px;">
+                <div style="color:#ff5252;">좌 <br><span id="resLeft" style="font-size:22px;">0</span></div>
+                <div style="color:#f39c12;">중 <br><span id="resMid" style="font-size:22px;">0</span></div>
+                <div style="color:#2ed573;">우 <br><span id="resRight" style="font-size:22px;">0</span></div>
+            </div>
+            <p id="resultMsg" style="font-size:15px; color:#666; margin:10px 0 20px 0; line-height:1.5; font-weight: bold;"></p>
+            
+            <button class="btn-main btn-submit" onclick="sendDataToGoogleForm()">📊 학습 결과 전송하기</button>
+            <div id="resultActionBtns" style="display:flex; flex-direction:column; gap:8px; margin-top: 10px;"></div>
+        </div>
+
+        <div id="historyModal" class="modal-content hidden">
+            <h2 style="color:#333; margin-bottom: 15px; font-size: 22px;">내 학습 기록</h2>
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th style="min-width:60px;">단원/일시</th>
+                            <th>1차</th>
+                            <th>2차</th>
+                            <th>3차</th>
+                            <th>4차</th>
+                            <th style="min-width:50px;">총시간</th>
+                            <th style="min-width:110px;">3/4차 오답<br>(단어|뜻)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyList"></tbody>
+                </table>
+            </div>
+            
+            <button class="btn-main btn-submit" onclick="sendDataToGoogleForm()" style="width: 90%; margin: 0 auto 10px;">📊 현재 기록 원장님께 전송하기</button>
+            <button class="btn-main btn-export" style="width: 90%; margin: 0 auto 10px; background:#34495e;" onclick="exportToCSV()">엑셀(CSV) 백업 다운로드</button>
+            <div style="display: flex; gap: 10px; width: 90%; margin: 0 auto;">
+                <button class="btn-main btn-danger" onclick="clearAllHistory()">기록 초기화</button>
+                <button class="btn-main btn-gray" onclick="closeHistory()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-panel">
+        <div class="control-row">
+            <select id="chapterSelect" onchange="handleChapterChange(event)"><option value="01 단원">01 단원</option><option value="02 단원">02 단원</option><option value="03 단원">03 단원</option><option value="04 단원">04 단원</option><option value="05 단원">05 단원</option><option value="06 단원">06 단원</option><option value="07 단원">07 단원</option><option value="08 단원">08 단원</option><option value="09 단원">09 단원</option><option value="10 단원">10 단원</option><option value="11 단원">11 단원</option><option value="12 단원">12 단원</option><option value="13 단원">13 단원</option><option value="14 단원">14 단원</option><option value="15 단원">15 단원</option><option value="16 단원">16 단원</option><option value="17 단원">17 단원</option><option value="18 단원">18 단원</option><option value="19 단원">19 단원</option><option value="20 단원">20 단원</option><option value="21 단원">21 단원</option><option value="22 단원">22 단원</option><option value="23 단원">23 단원</option><option value="24 단원">24 단원</option><option value="25 단원">25 단원</option><option value="26 단원">26 단원</option><option value="27 단원">27 단원</option><option value="28 단원">28 단원</option><option value="29 단원">29 단원</option><option value="30 단원">30 단원</option><option value="31 단원">31 단원</option><option value="32 단원">32 단원</option><option value="33 단원">33 단원</option><option value="34 단원">34 단원</option><option value="35 단원">35 단원</option><option value="36 단원">36 단원</option><option value="37 단원">37 단원</option><option value="38 단원">38 단원</option><option value="39 단원">39 단원</option><option value="40 단원">40 단원</option></select>
+            <select id="fontSizeLevel" onchange="updateUI()">
+                <option value="0.7">소</option>
+                <option value="0.9">중</option>
+                <option value="1.1" selected="">대 (기본)</option>
+                <option value="1.4">특대</option>
+                <option value="1.7">초대</option>
+            </select>
+            <button class="btn-panel upload" id="btnUpload" onclick="triggerCsvUpload()">업로드</button>
+        </div>
+        <div class="control-row">
+            <div class="lang-options">
+                <label><input type="radio" name="topLang" value="en2ko" onchange="syncLangAndUpdate()" checked=""> 영➔한</label>
+                <label><input type="radio" name="topLang" value="ko2en" onchange="syncLangAndUpdate()"> 한➔영</label>
+            </div>
+            <div class="panel-btns">
+                <button class="btn-panel btn-submit-top" onclick="sendDataToGoogleForm()">결과전송</button>
+                <button class="btn-panel" onclick="showHistory()">기록보기</button>
+                <button class="btn-panel primary" onclick="showStartModal()">처음으로</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-header">
+        <div class="mode-title" id="modeTitle">모드 선택</div>
+        <div class="status-info-row">
+            <div class="badge-group">
+                <div class="progress-badge badge-default" id="cycleBadge" style="display: none;">1회독</div>
+                <div class="progress-badge badge-default" id="progressText">0 / 0</div>
+            </div>
+            <div class="stopwatch-badge" id="stopwatchDisplay" style="display:block;">⏱ 00:00</div>
+        </div>
+    </div>
+    
+    <div class="timer-container" id="timerContainer"><div class="timer-bar" id="timerBar"></div></div>
+    
+    <div class="dashboard" id="mainDash">
+        <div class="box-status box-left">모름 <span id="cntLeft">0</span></div>
+        <div class="box-status box-mid">지연 <span id="cntMid">0</span></div>
+        <div class="box-status box-right">완벽 <span id="cntRight">0</span></div>
+    </div>
+
+    <div class="main-area-wrapper">
+        <div class="main-area" id="mainArea">
+            <div class="swipe-wrapper" id="swipeWrapper">
+                <div class="card" id="wordCard">
+                    <div class="card-face" id="cardFront"><div class="text-container" id="frontText"></div><div class="guide-text" id="frontGuide">터치하여 확인</div></div>
+                    <div class="card-face card-back"><div class="text-container" id="backText"></div><div class="guide-text" id="backGuide">밀어서 분류하세요</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="academy-logo">미사이든학원</div>
+    </div>
+    
+    <div class="swipe-info-guide" id="swipeInfoGuide">
+        <div class="guide-item" style="color:#ff5252;"><span>←</span><span>모름 / 틀림</span></div>
+        <div class="guide-item" style="color:#f39c12;"><span>↑</span><span>1~3초 걸림</span></div>
+        <div class="guide-item" style="color:#2ed573;"><span>→</span><span>0.5초 컷!</span></div>
+    </div>
+</div>
+
+<script>
+    /* =======================================================
+       🌟 환경 변수 및 설정 (영어 3열 파싱, 인증 유지)
+       ======================================================= */
+    const EMBEDDED_DATA = [{"chapter":"01 단원","word":"significant","meaning":"중요한; 의미 있는; 상당한, 아주 큰"},{"chapter":"01 단원","word":"exhibit","meaning":"보이다, 보여 주다; 전시하다; 전시품; 전시회"},{"chapter":"01 단원","word":"demonstrate","meaning":"입증하다, 증명하다; (행동으로) 보여 주다, 설명하다; 시위운동을 하다"},{"chapter":"01 단원","word":"mislead","meaning":"오도[호도]하다; 속이다"},{"chapter":"01 단원","word":"patent","meaning":"특허(권); 특허의; 특허를 받다"},{"chapter":"01 단원","word":"categorize","meaning":"분류하다, 범주에 넣다"},{"chapter":"01 단원","word":"innovate","meaning":"쇄신[혁신]하다"},{"chapter":"01 단원","word":"negotiator","meaning":"협상자, 교섭자"},{"chapter":"01 단원","word":"abstraction","meaning":"추상 (작용); 추상적 개념; 추출"},{"chapter":"01 단원","word":"statue","meaning":"조각상, (동)상"},{"chapter":"01 단원","word":"rust","meaning":"녹; 녹슬다, 부식시키다"},{"chapter":"01 단원","word":"execute","meaning":"실행하다, 수행하다; 처형하다, 사형하다"},{"chapter":"01 단원","word":"neglect","meaning":"무시하다, 등한시하다; 게을리하다; ~하지 않다; 무시, 경시; 부주의; 태만; 불이행"},{"chapter":"01 단원","word":"invoke","meaning":"(근거로) 들다[언급하다]; (법을) 발동[실시]하다; (법에) 호소하다; (신에게) 기원하다, 간구하다"},{"chapter":"01 단원","word":"superstition","meaning":"미신; 미신적 행위[관습]"},{"chapter":"01 단원","word":"anchor","meaning":"닻; 종합 사회자; 닻을 내려 정박시키다; 고정시키다"},{"chapter":"01 단원","word":"dangle","meaning":"(달랑) 매달리다, 흔들흔들하다; (남에게 붙어) 따라 다니다"},{"chapter":"01 단원","word":"expedition","meaning":"탐험, 원정; 탐험대, 원정대; 신속, 급속"},{"chapter":"01 단원","word":"exception","meaning":"예외, 이례; 제외; 이의, 반대"},{"chapter":"01 단원","word":"rear","meaning":"뒤(쪽), 배후; 뒤쪽의; 기르다, 교육하다"},{"chapter":"01 단원","word":"rare","meaning":"보기 드문, 희귀한; 진귀한; 살짝 익힌"},{"chapter":"01 단원","word":"discard","meaning":"버리다, 폐기하다; (사람을) 저버리다, 해고하다"},{"chapter":"01 단원","word":"discord","meaning":"불일치, 불화; 불협화음"},{"chapter":"01 단원","word":"objective","meaning":"객관적인; 물체의, 물질적인; <철학> 실증적인; 목적, 목표"},{"chapter":"01 단원","word":"come up with","meaning":"~을 만들어 내다[생산하다]; ~을 제시[제안]하다"},{"chapter":"01 단원","word":"at first glance","meaning":"언뜻 보기에는, 처음에는"},{"chapter":"01 단원","word":"wipe out","meaning":"~을 완전히 없애다[말살시키다]"},{"chapter":"01 단원","word":"cannot help but do","meaning":"~하지 않을 수 없다"},{"chapter":"01 단원","word":"in the presence of","meaning":"~이 있을 때, ~가 있는 데서"},{"chapter":"01 단원","word":"cut off","meaning":"~을 잘라 내다; ~을 차단하다, ~을 가로막다"},{"chapter":"02 단원","word":"interaction","meaning":"상호 작용[영향]"},{"chapter":"02 단원","word":"grateful","meaning":"감사하는, 고마워하는"},{"chapter":"02 단원","word":"regulate","meaning":"규제하다, 통제하다; 조절[조정]하다"},{"chapter":"02 단원","word":"administer","meaning":"관리[운영]하다; (법률·재판 등을) 집행[시행]하다; 주다; (약을) 투여하다"},{"chapter":"02 단원","word":"detrimental","meaning":"해로운, 불리한"},{"chapter":"02 단원","word":"favorable","meaning":"호의적인; 찬성하는; 유리한, 형편에 알맞은"},{"chapter":"02 단원","word":"occupy","meaning":"(지위·일자리를) 차지하다; 사용하다, 점유하다"},{"chapter":"02 단원","word":"subconscious","meaning":"잠재의식적인; 잠재의식"},{"chapter":"02 단원","word":"acquaintance","meaning":"아는 사람, 지인; 면식(이 있음), 친분; 지식, (사물에) 밝음"},{"chapter":"02 단원","word":"colleague","meaning":"동료, 동업자"},{"chapter":"02 단원","word":"coexist","meaning":"공존하다"},{"chapter":"02 단원","word":"seedling","meaning":"묘목"},{"chapter":"02 단원","word":"explode","meaning":"폭발하다[시키다], 터지다; (인구 등이) 폭발적으로 증가하다"},{"chapter":"02 단원","word":"stir","meaning":"휘젓다, 뒤섞다; 움직이다[흔들리다]; 자극하다, 동요시키다; 휘젓기, 뒤섞기; 동요"},{"chapter":"02 단원","word":"irresistible","meaning":"저항할[억누를] 수 없는; 너무 유혹적인"},{"chapter":"02 단원","word":"deduce","meaning":"(결론·진리 등을) 추론[추정]하다, 연역(演繹)하다"},{"chapter":"02 단원","word":"pollinator","meaning":"수분[꽃가루] 매개자"},{"chapter":"02 단원","word":"violation","meaning":"위반, 위배; 방해, 침해"},{"chapter":"02 단원","word":"violence","meaning":"폭력; 격렬함"},{"chapter":"02 단원","word":"ascend","meaning":"오르다, 상승하다; 승진하다"},{"chapter":"02 단원","word":"assent","meaning":"동의하다, 찬성하다; 찬성; 승인"},{"chapter":"02 단원","word":"underlie","meaning":"~의 기저를 이루다; ~의 밑에 있다"},{"chapter":"02 단원","word":"underline","meaning":"밑줄을 긋다; 강조하다; 밑줄"},{"chapter":"02 단원","word":"attribute","meaning":"~의 탓[덕분]으로 돌리다; (성질 등이) 있다고 생각하다; (…이) ~의 것이라고 생각하다; 속성, 특질"},{"chapter":"02 단원","word":"take ~ into account","meaning":"~을 고려하다, ~을 참작하다[계산에 넣다]"},{"chapter":"02 단원","word":"at the expense of","meaning":"~을 희생하여, ~의 비용을 대가로"},{"chapter":"02 단원","word":"keep up with","meaning":"~에 뒤처지지 않고 따라가다; 시류를 따르다; ~와 계속 연락하고 지내다"},{"chapter":"02 단원","word":"lag behind","meaning":"~보다 뒤처지다[낙후되다]"},{"chapter":"02 단원","word":"in vain","meaning":"허사가 되어, 헛되이"},{"chapter":"02 단원","word":"do away with","meaning":"~을 폐지하다[버리다]; ~을 처분하다"},{"chapter":"03 단원","word":"respondent","meaning":"응답자; 응하는, 반응하는"},{"chapter":"03 단원","word":"entail","meaning":"(필연적으로) 수반하다; (비용·노력 등을) 필요로 하다"},{"chapter":"03 단원","word":"sophisticated","meaning":"세련된, 지적인; (기계 등이) 정교한"},{"chapter":"03 단원","word":"elaborate","meaning":"정교한, 공들인; 자세히 말하다; 공들여 만들다; 다듬다"},{"chapter":"03 단원","word":"receptor","meaning":"(인체의) 수용기[감각기]"},{"chapter":"03 단원","word":"prescribe","meaning":"처방하다; 규정하다, 지시하다"},{"chapter":"03 단원","word":"acute","meaning":"심각한; 격렬한; (질병이) 급성의; (생김새가) 날카로운, 예리한"},{"chapter":"03 단원","word":"reflection","meaning":"(거울 등에 비친) 상[모습]; 반사; 반영; 숙고, 반성"},{"chapter":"03 단원","word":"stabilize","meaning":"안정되다, 안정[고정]시키다"},{"chapter":"03 단원","word":"elimination","meaning":"제거, 배제"},{"chapter":"03 단원","word":"profitable","meaning":"유익한, 이익이 되는; 수익성이 높은"},{"chapter":"03 단원","word":"spherical","meaning":"구 모양의, 구형의; 천체의"},{"chapter":"03 단원","word":"figurative","meaning":"비유적인; 회화[조소]적 표현의, 형상적인"},{"chapter":"03 단원","word":"cohesive","meaning":"화합하는, 단결된; 응집[점착]력이 있는"},{"chapter":"03 단원","word":"suspension","meaning":"매달리기; 일시 정지; 정학; 연기, 보류"},{"chapter":"03 단원","word":"dense","meaning":"밀집한, 빽빽한; (인구가) 조밀한; (안개 등이) 짙은; 농후한"},{"chapter":"03 단원","word":"considerable","meaning":"상당한, 많은; 중요한, 무시할 수 없는"},{"chapter":"03 단원","word":"considerate","meaning":"배려하는, 사려 깊은; 이해심이 있는"},{"chapter":"03 단원","word":"laboratory","meaning":"실험실, 실습실; 실험실(용)의, 실습의"},{"chapter":"03 단원","word":"monetary","meaning":"통화[화폐]의; 금전(상)의, 재정적인"},{"chapter":"03 단원","word":"momentary","meaning":"순간적인, 잠깐의"},{"chapter":"03 단원","word":"longevity","meaning":"장수; 수명"},{"chapter":"03 단원","word":"longitude","meaning":"경도(經度), 경선(經線)"},{"chapter":"03 단원","word":"matter","meaning":"문제, 일; 사건, 사태; 물질; 물체; 재료; 중요하다, 문제가 되다"},{"chapter":"03 단원","word":"be used to -ing","meaning":"~을 하는 것에 익숙하다"},{"chapter":"03 단원","word":"be accustomed to -ing","meaning":"~을 하는 것에 익숙하다, ~을 하는 것이 습관이 되다"},{"chapter":"03 단원","word":"interfere with","meaning":"~을 방해하다"},{"chapter":"03 단원","word":"make the most of","meaning":"~을 최대한 활용하다"},{"chapter":"03 단원","word":"insofar as","meaning":"~하는 한, ~하는[인] 한에 있어서(는)"},{"chapter":"03 단원","word":"do without","meaning":"~ 없이 지내다[해내다]"},{"chapter":"04 단원","word":"registration","meaning":"등록, 기재; (우편물의) 등기"},{"chapter":"04 단원","word":"notion","meaning":"생각, 개념; 의견"},{"chapter":"04 단원","word":"fiber","meaning":"섬유; 섬유 조직; 소질, 기질"},{"chapter":"04 단원","word":"refine","meaning":"(물질을) 정제[제련/정련]하다; 세련되게 하다; 개선하다"},{"chapter":"04 단원","word":"trajectory","meaning":"궤적, 궤도; 탄도(彈道)"},{"chapter":"04 단원","word":"strain","meaning":"부담, 압박; 긴장, 팽팽함; (근육의) 긴장, 염좌; 잡아당기다, 팽팽하게 하다"},{"chapter":"04 단원","word":"tension","meaning":"긴장 (상태), 팽팽함; 팽팽하게 하다"},{"chapter":"04 단원","word":"drawback","meaning":"결점, 문제점"},{"chapter":"04 단원","word":"fertilize","meaning":"(토지를) 비옥하게 하다, 비료를 주다; 수정시키다"},{"chapter":"04 단원","word":"conceivable","meaning":"생각할 수 있는, 상상할 수 있는"},{"chapter":"04 단원","word":"legitimate","meaning":"합법적인; 타당한, 정당한; 합법화하다"},{"chapter":"04 단원","word":"legal","meaning":"법률의; 합법적인"},{"chapter":"04 단원","word":"splash","meaning":"(물·흙탕물 등을) 튀(기)다; (흙탕물 등이) 튄 것, 얼룩"},{"chapter":"04 단원","word":"suspicion","meaning":"혐의, 의혹, 의심"},{"chapter":"04 단원","word":"skepticism","meaning":"회의; 회의론, 회의적 태도"},{"chapter":"04 단원","word":"deprivation","meaning":"박탈; 면직; 결핍, 빈곤"},{"chapter":"04 단원","word":"hostility","meaning":"적의, 적대(감); (생각·계획 등에 대한) 반대, 대립"},{"chapter":"04 단원","word":"hospitality","meaning":"환대, 후한 대접; 친절"},{"chapter":"04 단원","word":"alienate","meaning":"소외시키다, 소외감을 느끼게 하다"},{"chapter":"04 단원","word":"alleviate","meaning":"(고통 등을) 덜다, 경감하다, 완화하다"},{"chapter":"04 단원","word":"renovate","meaning":"개조하다, 수선하다; 혁신하다, 쇄신하다"},{"chapter":"04 단원","word":"imminent","meaning":"(위험 등이) 임박한, 목전의"},{"chapter":"04 단원","word":"eminent","meaning":"저명한; 뛰어난, 탁월한"},{"chapter":"04 단원","word":"spare","meaning":"~당하지 않게 하다, 면하게 하다; 아끼다, 절약하다; 나누어 주다, 할애하다; 남는, 여분의; 예비의; 검소한, 절약하는"},{"chapter":"04 단원","word":"make sense","meaning":"말이 되다, 타당하다; 의미가 통하다"},{"chapter":"04 단원","word":"by definition","meaning":"당연히, 분명히; 본질적으로; 정의상, 의미상"},{"chapter":"04 단원","word":"make up for","meaning":"(손실을) 보상[보전]하다, 벌충하다"},{"chapter":"04 단원","word":"compensate for","meaning":"~을 보상하다; ~을 보충[보완]하다"},{"chapter":"04 단원","word":"keep ~ away from …","meaning":"~을 …에서 멀리 두다, ~가 …에 가까이 가지 못하게 하다"},{"chapter":"04 단원","word":"draw ~ into …","meaning":"~을 …에 끌어들이다"},{"chapter":"05 단원","word":"bias","meaning":"편견, 선입견; 성향; 편견을 갖게 하다"},{"chapter":"05 단원","word":"atmosphere","meaning":"대기, 공기; 분위기, 기운"},{"chapter":"05 단원","word":"identical","meaning":"동일한, 똑같은"},{"chapter":"05 단원","word":"distinct","meaning":"뚜렷이 다른, 별개의; 뚜렷한, 분명한"},{"chapter":"05 단원","word":"ritual","meaning":"의식, 제식; 의식의, 의례적인"},{"chapter":"05 단원","word":"mindset","meaning":"사고방식, 태도"},{"chapter":"05 단원","word":"impair","meaning":"손상시키다, 해치다"},{"chapter":"05 단원","word":"undermine","meaning":"기반을 약화시키다; (명성 등을) 손상시키다"},{"chapter":"05 단원","word":"scratch","meaning":"(가려운 데를) 긁다; 할퀴다; 긁음; 긁힌 자국, 찰과상"},{"chapter":"05 단원","word":"ape","meaning":"유인원; 흉내 내다"},{"chapter":"05 단원","word":"stalk","meaning":"줄기; 몰래 접근하다, 스토킹하다; 활보하다"},{"chapter":"05 단원","word":"sprint","meaning":"전력 질주하다; 전력 질주; 단거리 경기"},{"chapter":"05 단원","word":"maximization","meaning":"극대화"},{"chapter":"05 단원","word":"tease","meaning":"놀리다; 곯리다, 괴롭히다; 곯리기; 곯리는 사람"},{"chapter":"05 단원","word":"rejoice","meaning":"크게 기뻐하다; 축하하다"},{"chapter":"05 단원","word":"mourn","meaning":"(불행 등을) 슬퍼하다; 애도하다"},{"chapter":"05 단원","word":"appliance","meaning":"(가정용) 기기; 전기 제품[기구]; 응용, 적용"},{"chapter":"05 단원","word":"compliance","meaning":"(법·명령 등의) 준수, 따름"},{"chapter":"05 단원","word":"deem","meaning":"(~으로) 여기다, 생각하다"},{"chapter":"05 단원","word":"doom","meaning":"(나쁜) 운명, 파멸; 운명을 정하다"},{"chapter":"05 단원","word":"deviation","meaning":"벗어남, 일탈 (행위), 탈선"},{"chapter":"05 단원","word":"distress","meaning":"고통, 괴로움; 곤란, 곤궁; 괴롭히다, 고통스럽게 하다"},{"chapter":"05 단원","word":"distrust","meaning":"불신; 의혹; 불신하다; 의심하다"},{"chapter":"05 단원","word":"minute","meaning":"미세한, 아주 작은; 사소한; 상세[정밀]한, 철저한; 세심한; (시간·각도 단위의) 분; 순간; (pl.)회의록"},{"chapter":"05 단원","word":"take over","meaning":"이어받다, 인계받다; 인수하다; (정권 등을) 장악하다"},{"chapter":"05 단원","word":"cast one’s eye on","meaning":"~에 눈길을 주다, ~을 바라보다"},{"chapter":"05 단원","word":"put up with","meaning":"~을 참다, ~을 견디다"},{"chapter":"05 단원","word":"come down with","meaning":"(별로 심각하지 않은 병에) 걸리다[들다]"},{"chapter":"05 단원","word":"last but not least","meaning":"마지막(이지만 마찬가지로 중요한 것)으로"},{"chapter":"05 단원","word":"dwell on","meaning":"~을 곰곰이 생각하다; ~을 자세히 설명하다"},{"chapter":"06 단원","word":"capture","meaning":"붙잡다, 체포하다; (마음·주의 등을) 사로잡다"},{"chapter":"06 단원","word":"liberate","meaning":"자유롭게 하다, 해방하다; 석방하다"},{"chapter":"06 단원","word":"infant","meaning":"유아, 소아; 유치원생; 유아용의; 초기의"},{"chapter":"06 단원","word":"sustain","meaning":"지탱하게 하다, 지속하다; (생명을) 유지하다"},{"chapter":"06 단원","word":"portion","meaning":"일부, 부분; 몫;(음식의)1인분; (부분·몫으로) 분배하다"},{"chapter":"06 단원","word":"fierce","meaning":"사나운, 잔인한; (감정 등이) 격렬한, 맹렬한"},{"chapter":"06 단원","word":"brutal","meaning":"잔혹한, 무자비한; 야만적인"},{"chapter":"06 단원","word":"assimilation","meaning":"동화 (작용), 융합; 흡수"},{"chapter":"06 단원","word":"validate","meaning":"입증하다, 승인[인정]하다; (법적으로) 유효하게 하다, 비준(批准)하다"},{"chapter":"06 단원","word":"conquer","meaning":"정복하다, 이기다; (곤란 등을) 극복하다; (명성 등을) 획득하다"},{"chapter":"06 단원","word":"enable","meaning":"가능하게 하다; ~을 할 수 있게 하다"},{"chapter":"06 단원","word":"forbid","meaning":"금(지)하다; ~을 어렵게[못 하게] 하다"},{"chapter":"06 단원","word":"starve","meaning":"굶주리다[굶기다], 굶어 죽다; 갈망하다, 갈망하게 하다"},{"chapter":"06 단원","word":"cram","meaning":"밀어 넣다, 채워 넣다; 벼락치기 공부를 하다"},{"chapter":"06 단원","word":"nourish","meaning":"기르다; ~에 영양분을 주다"},{"chapter":"06 단원","word":"televise","meaning":"TV로 방송하다, 방영하다"},{"chapter":"06 단원","word":"resent","meaning":"분개하다, 원망하다"},{"chapter":"06 단원","word":"withdraw","meaning":"움츠리다, 뒤로 빼다; 철수하다[시키다], 물러나다; (통화·서적 등을) 회수하다, 거둬들이다"},{"chapter":"06 단원","word":"withstand","meaning":"견디다, 버티다; 저항하다"},{"chapter":"06 단원","word":"withhold","meaning":"억제하다, 숨기다; (승낙 등을) 보류하다, 주지 않다"},{"chapter":"06 단원","word":"mute","meaning":"무언의, 말없는; 말을 못하는; 소리를 줄이다"},{"chapter":"06 단원","word":"mutual","meaning":"상호 간의, 서로의"},{"chapter":"06 단원","word":"mutate","meaning":"돌연변이하다[시키다]; 변형되다[시키다]"},{"chapter":"06 단원","word":"credit","meaning":"신용(도), 신뢰; 신용 거래; 공, 명예, 영예; 명성, 평판; 믿다, 신용하다; (공로 등을) ~에게 돌리다, ~에게 (…이) 있다고 믿다"},{"chapter":"06 단원","word":"account for","meaning":"(부분·비율을) 차지하다; ~을 설명하다, ~을 해명하다"},{"chapter":"06 단원","word":"come into play","meaning":"작동[활동]하기 시작하다"},{"chapter":"06 단원","word":"the chances are that","meaning":"아마 ~일 것이다, ~할 가능성이 높다"},{"chapter":"06 단원","word":"come into contact with","meaning":"~와 접촉하다[마주치다]"},{"chapter":"06 단원","word":"give rise to","meaning":"~을 낳다[일으키다], ~이 생기게 하다"},{"chapter":"06 단원","word":"end up -ing","meaning":"결국 ~하게 되다"},{"chapter":"07 단원","word":"characteristic","meaning":"특징, 특성, 특질; 특유의, 특징적인"},{"chapter":"07 단원","word":"norm","meaning":"표준, 기준; 규범, 모범"},{"chapter":"07 단원","word":"criterion","meaning":"기준, 척도(pl.criteria)"},{"chapter":"07 단원","word":"reproduction","meaning":"생식, 번식; 재생[재현]; 복제; 복사물"},{"chapter":"07 단원","word":"architectural","meaning":"건축의, 건축(학)상의"},{"chapter":"07 단원","word":"axis","meaning":"(사물의) 축, 축선; 중심선"},{"chapter":"07 단원","word":"navigate","meaning":"항행[항해]하다; 헤치고 나아가다; (배·비행기를) 조종[운전]하다; 검색하다"},{"chapter":"07 단원","word":"steer","meaning":"조종하다, ~의 키를 잡다;; (어떤 방향으로) 돌리다; (특정 방향으로) 움직이다, 나아가다"},{"chapter":"07 단원","word":"neural","meaning":"신경(계)의"},{"chapter":"07 단원","word":"fragile","meaning":"깨지기[부서지기] 쉬운, 취약한; 허약한"},{"chapter":"07 단원","word":"delicate","meaning":"부서지기 쉬운, 연약한; (감촉·자태가) 섬세한, 우아한; (감각·감정이) 민감한, 세심한"},{"chapter":"07 단원","word":"sweeper","meaning":"청소부; 청소기; 관리인"},{"chapter":"07 단원","word":"decay","meaning":"부패, 부식; 쇠퇴, 퇴락; 부패하다, 썩다; 쇠퇴하다, 퇴락하다"},{"chapter":"07 단원","word":"thorn","meaning":"(식물의) 가시; 가시나무; 고통을 주는 것"},{"chapter":"07 단원","word":"encompass","meaning":"포함하다, 망라하다; 에워싸다, 둘러싸다"},{"chapter":"07 단원","word":"testimony","meaning":"증거, 증언"},{"chapter":"07 단원","word":"destination","meaning":"목적지, 도착지; 목적"},{"chapter":"07 단원","word":"destiny","meaning":"운명, 숙명"},{"chapter":"07 단원","word":"embrace","meaning":"감싸다, 껴안다; 받아들이다, 포용하다; 포괄하다, 포함하다"},{"chapter":"07 단원","word":"counteract","meaning":"(악영향 등에) 대응하다, 방지하다"},{"chapter":"07 단원","word":"counterpart","meaning":"상응자[물], 대응자[물]"},{"chapter":"07 단원","word":"dispense","meaning":"분배하다, 나누어 주다; 베풀다; (약을) 조제하다"},{"chapter":"07 단원","word":"disperse","meaning":"분산[해산]시키다, 흩어지다"},{"chapter":"07 단원","word":"degree","meaning":"정도, 등급; 학위; 계급; (온도·각도·경위도 등의) 도(度)"},{"chapter":"07 단원","word":"pay off","meaning":"결실을 맺다, 성공하다; ~을 다 갚다"},{"chapter":"07 단원","word":"discourage ~ from -ing","meaning":"~가 …하는 것을 단념시키다, ~가 …하지 않도록 방해하다"},{"chapter":"07 단원","word":"be concerned about","meaning":"~에 관해 신경 쓰다, ~에 대해 걱정[우려]하다"},{"chapter":"07 단원","word":"come to an end","meaning":"끝나다, 종결되다; 죽다"},{"chapter":"07 단원","word":"leap to a conclusion","meaning":"속단하다, 성급한 결론을 내리다"},{"chapter":"07 단원","word":"engage with","meaning":"~와 관계를 맺다; ~에 관여하다"},{"chapter":"08 단원","word":"rely","meaning":"의존[의지]하다; 신뢰하다, 믿다"},{"chapter":"08 단원","word":"critic","meaning":"비평가, 평론가"},{"chapter":"08 단원","word":"vivid","meaning":"생생한, 눈에 보이는 듯한; (색·빛 등이) 선명한, 밝은; 활발한, 힘찬"},{"chapter":"08 단원","word":"pale","meaning":"창백한; 활기 없는; (색이) 옅은; (빛이) 희미한; 창백[흐릿]해지다"},{"chapter":"08 단원","word":"resilience","meaning":"회복[복원]력; 탄성, 탄력(성)"},{"chapter":"08 단원","word":"astronomer","meaning":"천문학자"},{"chapter":"08 단원","word":"basin","meaning":"웅덩이; (하천의) 유역, 분지; 양푼, 대야"},{"chapter":"08 단원","word":"famine","meaning":"기근, 기아; (물자의) 심한 부족"},{"chapter":"08 단원","word":"superficial","meaning":"외관상의, 표면상의; 피상적인, 깊이 없는; (상처 등이) 얕은"},{"chapter":"08 단원","word":"profound","meaning":"(지식·이해 등이) 깊은, 심오한; 엄청난"},{"chapter":"08 단원","word":"functionality","meaning":"기능성, 실용성"},{"chapter":"08 단원","word":"swell","meaning":"부풀[리]다, 팽창하다[시키다]; 부어오르다; (파도가) 넘실거리다; 부풀기, 팽창; (파도의) 넘실거림"},{"chapter":"08 단원","word":"advocate","meaning":"지지자, 옹호자; 지지하다, 옹호하다"},{"chapter":"08 단원","word":"opponent","meaning":"대항자, 반대자, 상대; 반대하는, 적대하는"},{"chapter":"08 단원","word":"revive","meaning":"소생하다[시키다]; 활기를 되찾다[되찾게 하다]; 재개하다; 부흥[부활]시키다"},{"chapter":"08 단원","word":"triumph","meaning":"승리; 대성공; 승리를 거두다; 성공하다"},{"chapter":"08 단원","word":"edible","meaning":"먹을 수 있는, 식용의; 식품, 음식"},{"chapter":"08 단원","word":"perspective","meaning":"시각, 관점; 원근법"},{"chapter":"08 단원","word":"respective","meaning":"각자의, 각각의"},{"chapter":"08 단원","word":"prospective","meaning":"장래의, 미래의; 가망이 있는, 유망한"},{"chapter":"08 단원","word":"dissent","meaning":"이의, 반대, 불찬성; 반대하다, 이의를 말하다"},{"chapter":"08 단원","word":"decent","meaning":"(수준·질이) 괜찮은, 쓸 만한; 품위 있는, 예의 바른; (상황에) 적절한, 온당한"},{"chapter":"08 단원","word":"descent","meaning":"하강, 강하; 내리막; 가계, 혈통"},{"chapter":"08 단원","word":"due","meaning":"~으로 인한, ~ 때문인; ~하기로 되어 있는[예정된]; 지급 기일이 된, 만기의; 정당한; 적당한"},{"chapter":"08 단원","word":"in terms of","meaning":"~의 측면에서, ~에 관해서"},{"chapter":"08 단원","word":"down the road","meaning":"앞으로, 장차 언젠가는"},{"chapter":"08 단원","word":"dispose of","meaning":"~을 없애다[처리하다]; (문제 등을) 처리[해결]하다"},{"chapter":"08 단원","word":"catch up with","meaning":"~을 따라잡다; ~를 체포하다"},{"chapter":"08 단원","word":"let alone","meaning":"~은 말할 것도 없이, ~은 고사하고"},{"chapter":"08 단원","word":"enroll in","meaning":"~에 등록하다"},{"chapter":"09 단원","word":"merge","meaning":"융합하다[시키다]; 합병하다[시키다]"},{"chapter":"09 단원","word":"separate","meaning":"분리되다[하다]; 떼어 놓다; 분리된, 별개의"},{"chapter":"09 단원","word":"adolescent","meaning":"청소년[사춘기의 사람], 젊은이; 청소년기[사춘기]의, 청춘의"},{"chapter":"09 단원","word":"synthetic","meaning":"합성한, 인조의; 종합적인; 인조[합성] 물질"},{"chapter":"09 단원","word":"flavor","meaning":"맛, 풍미; 멋, 운치; 맛을 내다, 풍미를 곁들이다"},{"chapter":"09 단원","word":"transit","meaning":"운송; 통과, 횡단; 환승; 변이, 변천; 운송하다; 통과하다, 횡단하다"},{"chapter":"09 단원","word":"variable","meaning":"변하기 쉬운, 가변적인; 변수"},{"chapter":"09 단원","word":"spill","meaning":"엎지르다, 흘리다; 쏟아지다, 넘치다; 유출(물); 엎지름"},{"chapter":"09 단원","word":"vague","meaning":"희미한, 어렴풋한; (형태 등이) 모호한, 애매한; 멍청한"},{"chapter":"09 단원","word":"apparent","meaning":"분명한, 명백한; 외관상의"},{"chapter":"09 단원","word":"geometry","meaning":"기하학"},{"chapter":"09 단원","word":"symbiotic","meaning":"공생의, 공생하는"},{"chapter":"09 단원","word":"overflow","meaning":"넘치다; 범람하다; (감정이) 가득 차다, 충만하다; 넘침; 범람; 과잉, 과도"},{"chapter":"09 단원","word":"botanical","meaning":"식물학(상)의"},{"chapter":"09 단원","word":"trim","meaning":"다듬다, 손질하다; (불필요한 부분을) 잘라 내다; 다듬기; 정돈"},{"chapter":"09 단원","word":"hemisphere","meaning":"(지구의) 반구; (뇌의) 반구; 반구체"},{"chapter":"09 단원","word":"consciousness","meaning":"의식, 자각"},{"chapter":"09 단원","word":"conscience","meaning":"양심, 도의심"},{"chapter":"09 단원","word":"humiliation","meaning":"굴욕, 수치; 창피 주기"},{"chapter":"09 단원","word":"humility","meaning":"겸손, 겸양, 스스로 낮춤"},{"chapter":"09 단원","word":"externalize","meaning":"(내적인 것을) 외면화하다, 객관화하다"},{"chapter":"09 단원","word":"prosecute","meaning":"기소하다, 공소하다"},{"chapter":"09 단원","word":"persecute","meaning":"(종교·정치적 이유로) 박해하다, 괴롭히다"},{"chapter":"09 단원","word":"patient","meaning":"참을성[인내심]이 있는, 잘 견디는; 끈기 있는, 근면한; 지속적인; (해석 등을) 허용하는, 여지가 있는; 병자, 환자"},{"chapter":"09 단원","word":"derive ~ from …","meaning":"~을 …에서 얻다[끌어내다]"},{"chapter":"09 단원","word":"stem from","meaning":"~에서 비롯되다, ~에서 유래하다"},{"chapter":"09 단원","word":"equip ~ with …","meaning":"~에 …을 갖추게 하다, ~에 …을 제공하다"},{"chapter":"09 단원","word":"all of a sudden","meaning":"갑자기, 느닷없이"},{"chapter":"09 단원","word":"let go of","meaning":"(쥐고 있던 것을) 놓다; (생각·태도 등을) 버리다, 포기하다"},{"chapter":"09 단원","word":"give way to","meaning":"~으로 바뀌다; ~에 굽히다, ~에게 항복하다"},{"chapter":"10 단원","word":"struggle","meaning":"애쓰다; 분투[고투]하다; 노력; 분투"},{"chapter":"10 단원","word":"strive","meaning":"노력하다, 애쓰다; 분투하다"},{"chapter":"10 단원","word":"tangible","meaning":"분명히 실재하는, 유형(有形)의; 만질[감지할] 수 있는"},{"chapter":"10 단원","word":"dimensional","meaning":"치수의; 차원의"},{"chapter":"10 단원","word":"weed","meaning":"잡초, 수초; 잡초를 뽑다"},{"chapter":"10 단원","word":"bounce","meaning":"튀다, 튀게 하다; (사람이) 뛰어오르다; 튐; 뛰어오름"},{"chapter":"10 단원","word":"browse","meaning":"둘러보다, 훑어보다; (정보를) 열람[검색]하다"},{"chapter":"10 단원","word":"alternative","meaning":"대체의, 대안의; 대안, 다른 방도"},{"chapter":"10 단원","word":"ingredient","meaning":"재료, 성분; 구성 요소"},{"chapter":"10 단원","word":"greed","meaning":"탐욕; 식탐"},{"chapter":"10 단원","word":"tribal","meaning":"부족의, 종족의"},{"chapter":"10 단원","word":"haul","meaning":"(세게) 끌다; 운반하다, 차로 나르다"},{"chapter":"10 단원","word":"vertical","meaning":"수직의, 세로의"},{"chapter":"10 단원","word":"horizontal","meaning":"수평(선)의, 가로의; 수평선[면]"},{"chapter":"10 단원","word":"presuppose","meaning":"예상하다, 미리 추정하다; 전제로 하다"},{"chapter":"10 단원","word":"extraction","meaning":"뽑아냄, 추출; 혈통, 계통"},{"chapter":"10 단원","word":"consume","meaning":"소비[소모]하다; 낭비하다; 먹다, 마시다"},{"chapter":"10 단원","word":"resume","meaning":"재개하다, 다시 시작하다; (권리·건강 등을) 되찾다, 회복하다"},{"chapter":"10 단원","word":"consent","meaning":"동의, 승낙; (의견의) 일치; 동의하다, 허락하다"},{"chapter":"10 단원","word":"content","meaning":"함량, 용량; 내용; 목차; 만족한"},{"chapter":"10 단원","word":"roam","meaning":"돌아다니다, 배회하다"},{"chapter":"10 단원","word":"confident","meaning":"자신감 있는, 확신하는"},{"chapter":"10 단원","word":"confidential","meaning":"비밀[기밀]의; 은밀한; 신뢰할 수 있는"},{"chapter":"10 단원","word":"preserve","meaning":"지키다, 보호하다; 보존[관리]하다, 유지하다; (음식물을) 저장하다; 소금[설탕]에 절이다; 보존하는 것; 보호 구역"},{"chapter":"10 단원","word":"turn out","meaning":"~인 것으로 드러나다[밝혀지다]; (일·결과 등이 특정 방식으로) 되다"},{"chapter":"10 단원","word":"far from","meaning":"~이라기보다는, 결코 ~이 아닌; ~에서 멀리"},{"chapter":"10 단원","word":"by no means","meaning":"결코 ~이 아닌"},{"chapter":"10 단원","word":"convert ~ into …","meaning":"~을 …으로 바꾸다[전환하다]"},{"chapter":"10 단원","word":"lie in","meaning":"~에 있다, ~에 놓여 있다"},{"chapter":"10 단원","word":"hit the mark","meaning":"예상이 들어맞다, 적중하다; 목표를 달성하다"},{"chapter":"11 단원","word":"thorough","meaning":"빈틈없는, 철저한; 순전한, 완전한"},{"chapter":"11 단원","word":"conventional","meaning":"전통적인, 종래의; 관습적인; 틀에 박힌, 전형적인"},{"chapter":"11 단원","word":"infrastructure","meaning":"(사회) 기반 시설; (단체 등의) 하부 조직[구조]"},{"chapter":"11 단원","word":"analogy","meaning":"유사점, 비슷함; 유추"},{"chapter":"11 단원","word":"aggregate","meaning":"합계, 총액; 총체적인, 합계의; 모으다, 결집시키다; 총계 ~이 되다"},{"chapter":"11 단원","word":"extrovert","meaning":"외향적인 사람; 외향성의, 외향적인"},{"chapter":"11 단원","word":"introvert","meaning":"내성[내향]적인 사람; 내성[내향]적인, 내향성의"},{"chapter":"11 단원","word":"clinical","meaning":"임상의; 병상의; 분석적인, 냉철한"},{"chapter":"11 단원","word":"tariff","meaning":"관세; 관세표, 관세율; 운임표, 요금표"},{"chapter":"11 단원","word":"diminution","meaning":"감소, 축소"},{"chapter":"11 단원","word":"overvalue","meaning":"과대평가하다, 지나치게 중시하다"},{"chapter":"11 단원","word":"overestimate","meaning":"과대평가하다"},{"chapter":"11 단원","word":"coincide","meaning":"동시에 일어나다; (생각·의견 등이) 일치하다"},{"chapter":"11 단원","word":"unveil","meaning":"(그림·동상 등의) 덮개[베일]를 벗기다; 공개하다, (비밀 등을) 밝히다"},{"chapter":"11 단원","word":"disclose","meaning":"(비밀 등을) 밝히다, 털어놓다; (숨은 것을) 드러내다, 노출시키다"},{"chapter":"11 단원","word":"contradict","meaning":"부정[부인]하다, 반박하다; ~에 모순되다"},{"chapter":"11 단원","word":"diverse","meaning":"다양한, 가지각색의"},{"chapter":"11 단원","word":"reverse","meaning":"반대로[거꾸로] 하다; 뒤집다; 반대의; 뒤의; 역, 반대; 뒤"},{"chapter":"11 단원","word":"defect","meaning":"결함, 결점; 단점; (정당·국가 등을) 버리다"},{"chapter":"11 단원","word":"infect","meaning":"감염[전염]시키다; 오염시키다"},{"chapter":"11 단원","word":"sabotage","meaning":"파괴[방해] 행위; 사보타주; (고의로) 방해[파괴]하다; 사보타주하다"},{"chapter":"11 단원","word":"quote","meaning":"인용하다; (가격을) 말하다, 시세를 매기다"},{"chapter":"11 단원","word":"quota","meaning":"할당량, 한도; 몫; 상품 할당량, 쿼터"},{"chapter":"11 단원","word":"sentence","meaning":"문장; 판결, 선고; 형벌; 선고하다, 판결하다; 형에 처하다"},{"chapter":"11 단원","word":"make up","meaning":"~을 구성하다[이루다]; 화장하다; (이야기 등을) 지어내다"},{"chapter":"11 단원","word":"get through","meaning":"~을 통과하다[빠져나가다]; ~을 해내다[끝내다]; ~에 합격하다"},{"chapter":"11 단원","word":"a case in point","meaning":"적절한[딱 들어맞는] 사례"},{"chapter":"11 단원","word":"cut down on","meaning":"~을 줄이다"},{"chapter":"11 단원","word":"make a fool of","meaning":"~를 망신 주다, ~를 바보로 만들다"},{"chapter":"11 단원","word":"in a nutshell","meaning":"아주 간결하게, 요약하자면"},{"chapter":"12 단원","word":"surround","meaning":"둘러싸다, 에워싸다; 포위하다"},{"chapter":"12 단원","word":"discipline","meaning":"규율; 훈련; 절제력; 학문 (분야)"},{"chapter":"12 단원","word":"flatter","meaning":"아첨하다, 치켜세우다"},{"chapter":"12 단원","word":"degrade","meaning":"품위[평판]를 떨어뜨리다; (질적으로) 저하시키다; (화학적으로) 분해되다[하다]"},{"chapter":"12 단원","word":"portray","meaning":"그리다, 묘사하다; 나타내다"},{"chapter":"12 단원","word":"depict","meaning":"그리다, 묘사하다"},{"chapter":"12 단원","word":"awkward","meaning":"(사람·동작 등이) 어색한; 서투른; 불편한, 다루기 힘든; 귀찮은, 난처한"},{"chapter":"12 단원","word":"allocate","meaning":"배당하다, 할당하다; 배치하다"},{"chapter":"12 단원","word":"commodity","meaning":"상품, 물품; 일용품, 필수품; 유용한[쓸모 있는] 것"},{"chapter":"12 단원","word":"coherent","meaning":"일관성 있는, 논리 정연한; 응집성의"},{"chapter":"12 단원","word":"biomass","meaning":"생물량"},{"chapter":"12 단원","word":"literate","meaning":"읽고 쓸 수 있는; 박식한; 글을 아는 사람"},{"chapter":"12 단원","word":"disapprove","meaning":"못마땅해하다; 비난하다; 찬성[승인]하지 않다"},{"chapter":"12 단원","word":"patriotic","meaning":"애국적인, 애국의"},{"chapter":"12 단원","word":"explicit","meaning":"명시적인, 명백한; 솔직한, 숨김없는"},{"chapter":"12 단원","word":"implicit","meaning":"함축[암시]적인; 내재하는; 절대적인"},{"chapter":"12 단원","word":"articulate","meaning":"분명히 표현하다; 또렷이 발음하다; 명확히 표현된, 분명한; 논리 정연한"},{"chapter":"12 단원","word":"involve","meaning":"포함[수반]하다; 관련[연루]시키다; 참여시키다"},{"chapter":"12 단원","word":"evolve","meaning":"(서서히) 발달하다[시키다]; 진화하다[시키다]"},{"chapter":"12 단원","word":"revolve","meaning":"(축을 중심으로) 돌다[회전하다]; 순환하다; (~을 중심으로) 전개하다"},{"chapter":"12 단원","word":"unanimous","meaning":"만장일치의, 이의가 없는"},{"chapter":"12 단원","word":"anonymous","meaning":"익명의, 작자 불명의; 특색 없는"},{"chapter":"12 단원","word":"autonomous","meaning":"자치의, 자주적인; (사람이) 자율적인"},{"chapter":"12 단원","word":"wind","meaning":"구불구불하다, 굽이치다; 감기다, 감다; 바람; 가스; 숨, 호흡"},{"chapter":"12 단원","word":"drop off","meaning":"내려놓다; 감소하다; 잠이 들다"},{"chapter":"12 단원","word":"give away","meaning":"기부하다, 나눠 주다; 양보하다, 양도하다; 폭로하다, 누설하다"},{"chapter":"12 단원","word":"think outside the box","meaning":"틀에서 벗어나[창의적으로] 생각하다"},{"chapter":"12 단원","word":"distinguish ~ from …","meaning":"~을 …과 구별하다"},{"chapter":"12 단원","word":"more often than not","meaning":"자주, 대개"},{"chapter":"12 단원","word":"in a vacuum","meaning":"외부와 단절된 상태에서"},{"chapter":"13 단원","word":"exposure","meaning":"노출, 드러냄; 접하기, 체험[경험]하기; 폭로; 적발"},{"chapter":"13 단원","word":"revelation","meaning":"드러냄, 폭로; (신의) 계시"},{"chapter":"13 단원","word":"spatial","meaning":"공간의, 공간적인; 우주의"},{"chapter":"13 단원","word":"archaeologist","meaning":"고고학자"},{"chapter":"13 단원","word":"confine","meaning":"제한[국한]하다; 가두다; 경계; 한계"},{"chapter":"13 단원","word":"expand","meaning":"(범위·크기를) 넓히다, 확대[확장]하다; (부피를) 팽창시키다"},{"chapter":"13 단원","word":"conformity","meaning":"순응, 따름, 복종; 유사; 일치"},{"chapter":"13 단원","word":"scheme","meaning":"계획, 안; 개요; 책략, 음모; 책략을 꾸미다"},{"chapter":"13 단원","word":"adjacent","meaning":"인접한, 부근의"},{"chapter":"13 단원","word":"accumulation","meaning":"축적, 누적; 축적물, 모인 돈"},{"chapter":"13 단원","word":"hesitation","meaning":"주저, 망설임; 우유부단"},{"chapter":"13 단원","word":"tolerate","meaning":"용인하다, 너그럽게 보아주다; 참다"},{"chapter":"13 단원","word":"dismissal","meaning":"해고, 해임; 묵살, 일축; (소송의) 기각"},{"chapter":"13 단원","word":"layoff","meaning":"해고[휴직] (기간)"},{"chapter":"13 단원","word":"peculiar","meaning":"이상한, 기이한; 특유한, 고유한"},{"chapter":"13 단원","word":"scribble","meaning":"휘갈겨 쓰다, 낙서하다; 휘갈겨 쓴 글씨, 낙서"},{"chapter":"13 단원","word":"addition","meaning":"추가, 부가; 덧셈"},{"chapter":"13 단원","word":"addiction","meaning":"중독; 탐닉"},{"chapter":"13 단원","word":"radial","meaning":"광선의; 방사상의, 복사형의"},{"chapter":"13 단원","word":"radical","meaning":"근본적인, 기초적인; 급진적인, 과격한; 급진주의자"},{"chapter":"13 단원","word":"maturity","meaning":"성숙(기), 원숙(기)"},{"chapter":"13 단원","word":"hypothesis","meaning":"가설; 추측(pl.hypotheses)"},{"chapter":"13 단원","word":"hypnosis","meaning":"최면 (상태); 최면술"},{"chapter":"13 단원","word":"article","meaning":"기사, 논설; (규칙·계약 등의) 조항, 규약; 물품, 물건; 품목"},{"chapter":"13 단원","word":"in favor of","meaning":"~에 유리하게, ~의 이익을 위하여; ~에 찬성[지지]하여"},{"chapter":"13 단원","word":"go about","meaning":"~을 시작하다; 계속 ~을 하다"},{"chapter":"13 단원","word":"a multitude of","meaning":"다수의"},{"chapter":"13 단원","word":"in nature","meaning":"사실상, 현실적으로; 완전히"},{"chapter":"13 단원","word":"opt for","meaning":"~을 선택하다"},{"chapter":"13 단원","word":"a dose of","meaning":"약간의, 일정량의"},{"chapter":"14 단원","word":"independent","meaning":"(나라·조직이) 독립된, 자치적인; 독립심이 강한; 자율[자립]적인"},{"chapter":"14 단원","word":"interpretation","meaning":"해석, 해설; 통역"},{"chapter":"14 단원","word":"flexibility","meaning":"유연성, 구부리기 쉬움; 융통성"},{"chapter":"14 단원","word":"rigidity","meaning":"단단함, 경직; 엄격"},{"chapter":"14 단원","word":"trace","meaning":"자취, 흔적; 극미량, 조금; 추적하다, 찾아내다"},{"chapter":"14 단원","word":"default","meaning":"불이행; 기본(값), 디폴트; 이행하지 않다"},{"chapter":"14 단원","word":"declare","meaning":"선언[공표]하다; (소득액·과세품을) 신고하다"},{"chapter":"14 단원","word":"contaminate","meaning":"오염시키다; 악영향을 주다"},{"chapter":"14 단원","word":"cheat","meaning":"속이다, 사기 치다; 부정행위를 하다; 속임수; 사기꾼"},{"chapter":"14 단원","word":"fraud","meaning":"사기, 속임수; 사기꾼, 협잡꾼"},{"chapter":"14 단원","word":"improvised","meaning":"즉흥의, 즉석에서 지은"},{"chapter":"14 단원","word":"trade-off","meaning":"(대립되는 요소 사이의) 균형; (타협을 위한) 거래, 교환"},{"chapter":"14 단원","word":"pharmacy","meaning":"약국; 약학, 약제학"},{"chapter":"14 단원","word":"meditate","meaning":"명상하다, 숙고하다; 꾀하다, 계획하다"},{"chapter":"14 단원","word":"displacement","meaning":"이동; 대체; 해고, 면직"},{"chapter":"14 단원","word":"fluctuation","meaning":"변동, 변화; 동요, 불안정"},{"chapter":"14 단원","word":"comparative","meaning":"비교의, 비교에 의한; 비교적인, 상대적인"},{"chapter":"14 단원","word":"comparable","meaning":"필적하는, 비교할 수 있는; 비슷한"},{"chapter":"14 단원","word":"intricate","meaning":"복잡한, 얽힌; 난해한"},{"chapter":"14 단원","word":"intrigue","meaning":"호기심을 자극하다; 음모를 꾸미다; 음모, 계략"},{"chapter":"14 단원","word":"shrub","meaning":"관목"},{"chapter":"14 단원","word":"primate","meaning":"영장류; (가톨릭) 대주교"},{"chapter":"14 단원","word":"primary","meaning":"주된, 주요한; 제1의; 최초의, 초기의; 초보의, 초등의"},{"chapter":"14 단원","word":"peer","meaning":"동료, 또래; (능력 등이) 동등한 사람; (가치·질이) 동등한 것; 응시하다, 주시하다; (보일 듯 말 듯) 나타나다, 보이기 시작하다"},{"chapter":"14 단원","word":"show off","meaning":"~을 뽐내다[자랑하다]; 돋보이게 하다"},{"chapter":"14 단원","word":"go all out for","meaning":"(~에) 전력을 다하다, 총력을 기울이다"},{"chapter":"14 단원","word":"be accused of","meaning":"~으로 고소[기소]되다; ~으로 비난받다"},{"chapter":"14 단원","word":"every now and then","meaning":"때때로, 가끔"},{"chapter":"14 단원","word":"from time to time","meaning":"이따금, 가끔"},{"chapter":"14 단원","word":"put off","meaning":"~을 미루다[연기하다]"},{"chapter":"15 단원","word":"opposite","meaning":"반대쪽의, 마주보고 있는; 정반대의; 반대의 사람[일/물건]"},{"chapter":"15 단원","word":"accompany","meaning":"동반하다, 동행하다; 수반하다, 동시에 일어나다; (악기로) 반주하다"},{"chapter":"15 단원","word":"foundation","meaning":"토대, 기초; 설립, 창립; 재단"},{"chapter":"15 단원","word":"vulnerable","meaning":"취약한, 상처[비난]받기 쉬운; 약점이 있는"},{"chapter":"15 단원","word":"disrupt","meaning":"방해하다, 지장을 주다; 분열시키다, 붕괴시키다"},{"chapter":"15 단원","word":"disturb","meaning":"방해하다; 불안하게 하다; (고요함 등을) 어지럽히다"},{"chapter":"15 단원","word":"auditory","meaning":"청각(기관)의, 귀의"},{"chapter":"15 단원","word":"alien","meaning":"용납되지 않는; 이질적인; 외국의, 외래의; 외계의; 외국인; 외계인"},{"chapter":"15 단원","word":"dispute","meaning":"논의, 논쟁; 분쟁; 논의하다, 논쟁하다; 분쟁을 벌이다; 이의를 제기하다, 반박하다"},{"chapter":"15 단원","word":"controversy","meaning":"논란, 논쟁"},{"chapter":"15 단원","word":"interference","meaning":"방해, 훼방; 간섭, 참견, 개입"},{"chapter":"15 단원","word":"transplant","meaning":"이식하다, 옮겨 심다; 이주하다[시키다]; 이식; 이주"},{"chapter":"15 단원","word":"doctorate","meaning":"박사 학위"},{"chapter":"15 단원","word":"pirate","meaning":"해적; 저작권 침해자; 해적 행위를 하다; 약탈하다; 저작권을 침해하다, 불법 복제하다"},{"chapter":"15 단원","word":"disgust","meaning":"역겹게 하다, 혐오감을 유발하다; 혐오, 역겨움"},{"chapter":"15 단원","word":"aversion","meaning":"혐오, 싫음, 반감"},{"chapter":"15 단원","word":"intention","meaning":"의도, 의사; 목적; 개념, 관념"},{"chapter":"15 단원","word":"intervention","meaning":"개입, 간섭; 조정, 중재"},{"chapter":"15 단원","word":"console","meaning":"위로하다, 위안을 주다"},{"chapter":"15 단원","word":"consolidate","meaning":"(권력·지위 등을) 강화하다, 굳히다; 통합하다, 합병하다"},{"chapter":"15 단원","word":"simultaneous","meaning":"동시의, 동시에 일어나는"},{"chapter":"15 단원","word":"transaction","meaning":"거래, 업무; 매매"},{"chapter":"15 단원","word":"translation","meaning":"번역, 통역; 해석"},{"chapter":"15 단원","word":"square","meaning":"정사각형; 광장; 정사각형의; 직각의; 제곱[평방]의; 정사각형으로 만들다"},{"chapter":"15 단원","word":"drop out","meaning":"중퇴하다; (참여하던 것에서) 빠지다"},{"chapter":"15 단원","word":"go off","meaning":"(경보기 등이)울리다; 발사되다, 폭발하다; (무엇을 하러) 자리를 뜨다"},{"chapter":"15 단원","word":"add up to","meaning":"결국 ~이 되다; 합계 ~가 되다"},{"chapter":"15 단원","word":"fall on","meaning":"~에게 (책임 등이) 주어지다; (날짜가) ~에 해당하다; 우연히 만나다, 마주치다"},{"chapter":"15 단원","word":"put out","meaning":"(불을) 끄다; (쓰레기 등을) 내다 놓다"},{"chapter":"15 단원","word":"keep track of","meaning":"~을 기록하다; ~의 자국을 뒤밟다"},{"chapter":"16 단원","word":"commercial","meaning":"상업의; 영리적인; (상업) 광고"},{"chapter":"16 단원","word":"crime","meaning":"범죄, 범행; 죄악"},{"chapter":"16 단원","word":"manipulate","meaning":"(기계 등을) 잘 다루다, 조작하다; (여론 등을) 조종하다; 교묘하게 조작하다"},{"chapter":"16 단원","word":"accelerate","meaning":"빠르게 하다, 가속하다; 촉진하다"},{"chapter":"16 단원","word":"distract","meaning":"(마음·주의 등을) 흩뜨리다, 산만하게 하다; 괴롭히다, 혼란시키다"},{"chapter":"16 단원","word":"creep","meaning":"기다, 포복하다; 살금살금 움직이다"},{"chapter":"16 단원","word":"automate","meaning":"자동화하다; 자동 조종하다"},{"chapter":"16 단원","word":"depress","meaning":"우울하게 만들다, 낙담하게 하다; 침체시키다; 약화시키다"},{"chapter":"16 단원","word":"attract","meaning":"(주의·흥미 등을) 끌다; 유인하다, 매혹하다"},{"chapter":"16 단원","word":"anatomy","meaning":"(해부학적) 구조; 해부, 분석; 해부학"},{"chapter":"16 단원","word":"groan","meaning":"신음하다; 불평하다; 신음 소리; 불평의 소리"},{"chapter":"16 단원","word":"leverage","meaning":"지레의 작용, 지렛대 사용; 이용하다; 영향력; 영향을 주다"},{"chapter":"16 단원","word":"plumber","meaning":"배관공"},{"chapter":"16 단원","word":"sacred","meaning":"성스러운, 신성한; 종교적인"},{"chapter":"16 단원","word":"temporal","meaning":"현세의, 세속적인; 시간의; 일시적인"},{"chapter":"16 단원","word":"analysis","meaning":"분석; 분해(pl. analyses)"},{"chapter":"16 단원","word":"personnel","meaning":"(pl.)전직원, 총인원; 인사과; 직원의; 인사의"},{"chapter":"16 단원","word":"personal","meaning":"개인의, 개인적인; 사적인; 인격적인; 사람의"},{"chapter":"16 단원","word":"embed","meaning":"(~에) 꽂아[끼워] 넣다; (마음속에) 깊이 새겨 두다"},{"chapter":"16 단원","word":"embody","meaning":"구현하다, 구체화하다; 통합하다, 포함하다"},{"chapter":"16 단원","word":"slope","meaning":"경사면, (산)비탈; 경사지다, 기울어지다"},{"chapter":"16 단원","word":"ambiguous","meaning":"애매한, 모호한; 두 가지 뜻으로 해석되는"},{"chapter":"16 단원","word":"ambitious","meaning":"야망[야심] 있는; 열망하는"},{"chapter":"16 단원","word":"even","meaning":"균등한, 동일한; 일정한; 짝수의; 평평한, 반반한; 고르게 하다; 균형을 맞추다; 심지어, ~조차도; 훨씬"},{"chapter":"16 단원","word":"take on","meaning":"~을 맡다, ~을 책임지다; 고용하다"},{"chapter":"16 단원","word":"go over","meaning":"~을 검토[조사]하다"},{"chapter":"16 단원","word":"adhere to","meaning":"~을 고수하다, ~을 충실히 지키다"},{"chapter":"16 단원","word":"feel free to do","meaning":"마음 놓고 ~해도 좋다"},{"chapter":"16 단원","word":"refrain from","meaning":"~을 삼가다[피하다]"},{"chapter":"16 단원","word":"hold true","meaning":"진실이다; (규칙 등이) 유효하다, 딱 들어맞다"},{"chapter":"17 단원","word":"encounter","meaning":"만남, 조우; 마주치다, 우연히 만나다"},{"chapter":"17 단원","word":"exceed","meaning":"넘다, 초과하다; 도를 넘다"},{"chapter":"17 단원","word":"transcend","meaning":"넘다, 초월하다; 능가하다"},{"chapter":"17 단원","word":"mutation","meaning":"돌연변이; 변화, 변형"},{"chapter":"17 단원","word":"ethnic","meaning":"민족[종족]의"},{"chapter":"17 단원","word":"biodiversity","meaning":"생물 다양성"},{"chapter":"17 단원","word":"disposal","meaning":"처리, 처분; 폐기; 배치, 배열"},{"chapter":"17 단원","word":"hatch","meaning":"부화하다[시키다], 알이 깨다; 부화"},{"chapter":"17 단원","word":"lure","meaning":"꾀다, 유혹하다; 유혹, 매력; 미끼"},{"chapter":"17 단원","word":"temptation","meaning":"유혹(물); 마음을 끄는 것"},{"chapter":"17 단원","word":"valuation","meaning":"평가; (평가된) 가치"},{"chapter":"17 단원","word":"enclosure","meaning":"울타리를 친 장소, 구내; 동봉(한 것)"},{"chapter":"17 단원","word":"anthropological","meaning":"인류학(상)의"},{"chapter":"17 단원","word":"descend","meaning":"내려오다, 하강하다; 전해지다, 계통을 잇다"},{"chapter":"17 단원","word":"feminine","meaning":"여성의, 여자의"},{"chapter":"17 단원","word":"plunge","meaning":"뛰어들다; 떨어지다; 뛰어들기; 낙하"},{"chapter":"17 단원","word":"announce","meaning":"발표[공표]하다, 알리다"},{"chapter":"17 단원","word":"pronounce","meaning":"발음하다; 표명하다, 선언[선고]하다"},{"chapter":"17 단원","word":"abstract","meaning":"추상적인; 이론적인, 관념적인; 추상화; 개요; 추출하다; 발췌하다; 요약하다"},{"chapter":"17 단원","word":"abstain","meaning":"삼가다, 자제하다; (투표를) 기권하다"},{"chapter":"17 단원","word":"solemn","meaning":"엄숙한, 근엄한"},{"chapter":"17 단원","word":"comprise","meaning":"구성하다, ~로 구성되다; 포함하다"},{"chapter":"17 단원","word":"compromise","meaning":"타협, 양보; 절충; 타협하다; (명성 등을) 더럽히다, 손상하다"},{"chapter":"17 단원","word":"stable","meaning":"안정된; 견고한; (성격 등이) 착실한, 지조가 굳은; 마구간, 외양간"},{"chapter":"17 단원","word":"make one’s own way","meaning":"나아가다, 자신의 길을 개척하다; 출세하다"},{"chapter":"17 단원","word":"hit upon","meaning":"~을 (우연히) 생각해 내다"},{"chapter":"17 단원","word":"all in all","meaning":"대체로"},{"chapter":"17 단원","word":"few and far between","meaning":"흔치 않은, 아주 드문"},{"chapter":"17 단원","word":"run for","meaning":"~에 출마하다, ~에 입후보하다"},{"chapter":"17 단원","word":"lay down","meaning":"~을 내려놓다; 그만두다, 사임하다; (법 등을) 정하다"},{"chapter":"18 단원","word":"illustrate","meaning":"설명하다, 예증[예시]하다; 삽화를 쓰다"},{"chapter":"18 단원","word":"overwhelm","meaning":"압도하다, 제압하다"},{"chapter":"18 단원","word":"carpenter","meaning":"목수[목공]; 목수[목공] 일을 하다"},{"chapter":"18 단원","word":"exclaim","meaning":"소리치다, 외치다"},{"chapter":"18 단원","word":"cognition","meaning":"인식[인지]; 지식"},{"chapter":"18 단원","word":"disregard","meaning":"무시[경시]; 무관심; 무시[경시]하다; 소홀히 하다"},{"chapter":"18 단원","word":"dissolve","meaning":"녹다, 용해시키다; (의회·단체 등을) 해산하다; (계약·약속·속박 등을) 해체하다"},{"chapter":"18 단원","word":"solidify","meaning":"굳어지다, 응고시키다; 단결[결속]시키다; (생각 등을) 확고히 하다"},{"chapter":"18 단원","word":"approximation","meaning":"근사(치); 비슷한[근접한] 것"},{"chapter":"18 단원","word":"verse","meaning":"운문; (노래의) 절; (시의) 연; ~에 정통[숙달]하다"},{"chapter":"18 단원","word":"endow","meaning":"기부하다; (능력·자질 등을) 부여하다, 주다"},{"chapter":"18 단원","word":"accountable","meaning":"책임이 있는; 설명할 수 있는"},{"chapter":"18 단원","word":"predominant","meaning":"뛰어난, 우세한; 주된; 지배적인"},{"chapter":"18 단원","word":"subordinate","meaning":"부차적인; 하위[하급]의, 종속하는; 부하, 하급자; ~을 하위에 두다, 종속시키다"},{"chapter":"18 단원","word":"acknowledge","meaning":"인정하다, 승인하다; 사례하다, 감사하다"},{"chapter":"18 단원","word":"empower","meaning":"~할 수 있게 하다; (법률상) 권한을 주다"},{"chapter":"18 단원","word":"explosion","meaning":"폭발; 폭발적 증가"},{"chapter":"18 단원","word":"expansion","meaning":"팽창; 확장[확대]"},{"chapter":"18 단원","word":"eruption","meaning":"(화산의) 폭발, 분화; 분출(물)"},{"chapter":"18 단원","word":"erosion","meaning":"부식, 침식 (작용)"},{"chapter":"18 단원","word":"hollow","meaning":"속이 빈, 움푹 꺼진; 공허한; 무의미한; 구멍; 움푹 꺼진 곳"},{"chapter":"18 단원","word":"elegant","meaning":"우아한, 품위 있는; (과학적으로) 정밀한"},{"chapter":"18 단원","word":"eloquent","meaning":"능변의, 웅변의; 표현[표정]이 풍부한"},{"chapter":"18 단원","word":"principal","meaning":"주요한; 제1의, 선두의; 원금의, 자본금의; (단체의) 장, 지배자; 교장, 학장; (연극 등의) 주연; 주동자"},{"chapter":"18 단원","word":"stand for","meaning":"~을 상징[의미]하다; ~을 옹호[찬성]하다"},{"chapter":"18 단원","word":"hold back","meaning":"~을 저지[제지]하다; ~을 비밀로 하다"},{"chapter":"18 단원","word":"approve of","meaning":"~을 승인[인정]하다, ~에 찬성하다"},{"chapter":"18 단원","word":"find oneself in","meaning":"~에 있는 신세가 되다"},{"chapter":"18 단원","word":"search for","meaning":"~을 찾다; (진리를) 추구[탐구]하다"},{"chapter":"18 단원","word":"let off","meaning":"~을 내뿜다; (총을) 발사하다; (폭탄 등을) 터뜨리다"},{"chapter":"19 단원","word":"paradigm","meaning":"모범, 전형적인 예; 패러다임(사고의 체계)"},{"chapter":"19 단원","word":"recommend","meaning":"추천하다, 권(고)하다"},{"chapter":"19 단원","word":"proportion","meaning":"비율, 부분; 균형"},{"chapter":"19 단원","word":"collaboration","meaning":"협업[협력], 공동 작업"},{"chapter":"19 단원","word":"fake","meaning":"가짜[거짓]의, 위조의; 모조품, 위조품; 위조하다"},{"chapter":"19 단원","word":"genuine","meaning":"진짜의, 진품의; 진실한, 진심 어린"},{"chapter":"19 단원","word":"distortion","meaning":"(모양의) 비틀림, 뒤틀림; (사실 등의) 왜곡, 곡해"},{"chapter":"19 단원","word":"despair","meaning":"절망하다, 체념하다; 절망"},{"chapter":"19 단원","word":"modest","meaning":"겸손한; 보통의, 적당한"},{"chapter":"19 단원","word":"villain","meaning":"악당, 악인; (영화 등의) 악역"},{"chapter":"19 단원","word":"epidemic","meaning":"(병 등의) 유행, 확산; 유행병, 전염병; 유행성의, 전염성의"},{"chapter":"19 단원","word":"plague","meaning":"전염병; 흑사병; (곤충 등의) 떼, 습격; 괴롭히다, 성가시게 하다"},{"chapter":"19 단원","word":"presumable","meaning":"추정할 수 있는; 있음직한"},{"chapter":"19 단원","word":"conceit","meaning":"자만(심), 자부(심); 상상; 기발한 착상"},{"chapter":"19 단원","word":"accusation","meaning":"고발, 고소; 비난"},{"chapter":"19 단원","word":"humanitarian","meaning":"인도주의의, 박애의; 인도주의자"},{"chapter":"19 단원","word":"suspect","meaning":"의심하다; 혐의를 두다; 용의자"},{"chapter":"19 단원","word":"inspect","meaning":"검사[점검]하다, 조사하다; (공장 등을) 사찰하다"},{"chapter":"19 단원","word":"enforce","meaning":"(법률 등을) 시행[실시]하다, 집행하다; 강요하다"},{"chapter":"19 단원","word":"reinforce","meaning":"강화하다, 보강하다"},{"chapter":"19 단원","word":"swarm","meaning":"무리, 떼; 군중; 떼를 지어 다니다"},{"chapter":"19 단원","word":"altar","meaning":"(교회의) 제단"},{"chapter":"19 단원","word":"alter","meaning":"바꾸다, 고치다; 변하다, 달라지다"},{"chapter":"19 단원","word":"breed","meaning":"새끼를 낳다; 사육하다, 번식시키다; (품종을) 개량하다; 야기하다, 불러오다; 품종"},{"chapter":"19 단원","word":"stand out","meaning":"두각을 나타내다, 돋보이다"},{"chapter":"19 단원","word":"in and of itself","meaning":"그 자체로(는)"},{"chapter":"19 단원","word":"first and foremost","meaning":"무엇보다도, 가장 중요한 것은"},{"chapter":"19 단원","word":"shed light on","meaning":"~을 조명하다, ~을 비추다[밝히다]"},{"chapter":"19 단원","word":"cast light on","meaning":"~을 밝히다, ~을 조명하다"},{"chapter":"19 단원","word":"level off","meaning":"안정되다[시키다]"},{"chapter":"20 단원","word":"tendency","meaning":"경향[성향], 기질; 동향, 추세"},{"chapter":"20 단원","word":"inclination","meaning":"경향[성향], 기질; 기울기, 경사도"},{"chapter":"20 단원","word":"adjust","meaning":"조정[조절]하다; 적응하다, 순응하다"},{"chapter":"20 단원","word":"hierarchy","meaning":"계급, 계층, 서열; (pl.)지배층"},{"chapter":"20 단원","word":"illuminate","meaning":"(빛을) 비추다, 조명하다; 설명하다; 계몽하다"},{"chapter":"20 단원","word":"overshadow","meaning":"그늘지게 하다, 어둡게 하다; 우울하게 하다"},{"chapter":"20 단원","word":"fallacy","meaning":"오류; 잘못된 생각"},{"chapter":"20 단원","word":"relief","meaning":"안도, 위안; 경감, 완화; 구호(품)"},{"chapter":"20 단원","word":"emit","meaning":"(빛·열 등을) 내다[내뿜다]"},{"chapter":"20 단원","word":"exhale","meaning":"(숨을) 내쉬다, 내뿜다; 발산하다"},{"chapter":"20 단원","word":"bay","meaning":"만(灣); 궁지, 몰린 상태"},{"chapter":"20 단원","word":"wetland","meaning":"습지, 습지대"},{"chapter":"20 단원","word":"regress","meaning":"되돌아가다; 퇴행[퇴보]하다; 귀환, 복귀; 퇴행[퇴보]"},{"chapter":"20 단원","word":"establishment","meaning":"설립[수립], 확립; 기관, 시설; 기득권층"},{"chapter":"20 단원","word":"randomization","meaning":"무작위[임의] 추출"},{"chapter":"20 단원","word":"adore","meaning":"흠모하다, 아주 좋아하다"},{"chapter":"20 단원","word":"cooperation","meaning":"협력, 협동"},{"chapter":"20 단원","word":"corporation","meaning":"기업[회사], 법인"},{"chapter":"20 단원","word":"remainder","meaning":"나머지, 잔여; (pl.)유적, 유물; 나머지의"},{"chapter":"20 단원","word":"reminder","meaning":"생각나게 하는 것[사람], (상기시키는) 신호[조언]"},{"chapter":"20 단원","word":"hypothetical","meaning":"가설[가정]의; 가상적인"},{"chapter":"20 단원","word":"complement","meaning":"보완(물), 보충(물); 보완하다, 보충하다"},{"chapter":"20 단원","word":"compliment","meaning":"칭찬, 찬사; 칭찬하다, 찬사를 보내다"},{"chapter":"20 단원","word":"discharge","meaning":"(짐을) 내리다; (개체 등을) 방출[배출]하다; 해고하다; 석방[해방]하다; 제대시키다; 이행하다; 방출, 배출(물); 해고; 해방[석방]; 제대"},{"chapter":"20 단원","word":"when it comes to","meaning":"~에 관한 한, ~에 대해서라면"},{"chapter":"20 단원","word":"in proportion to","meaning":"~에 비례하여, ~과 균형을 이루어"},{"chapter":"20 단원","word":"around the clock","meaning":"24시간 내내, 밤낮으로"},{"chapter":"20 단원","word":"for fear of","meaning":"~을 두려워하여, ~이 없도록"},{"chapter":"20 단원","word":"so as to do","meaning":"~하도록, ~하기 위해서"},{"chapter":"20 단원","word":"make a point of","meaning":"~을 꼭 하기로 되어 있다, ~을 늘 하다"},{"chapter":"21 단원","word":"genetic","meaning":"유전(학)의"},{"chapter":"21 단원","word":"minimize","meaning":"최소화하다; 과소평가하다, 얕보다"},{"chapter":"21 단원","word":"coordinate","meaning":"조정하다; 조직화[편성]하다; 동격의, 동등한"},{"chapter":"21 단원","word":"arrange","meaning":"정리하다; 배열하다; (분쟁 등을) 조정하다; 준비[마련]하다"},{"chapter":"21 단원","word":"amplify","meaning":"증폭시키다, 확대하다; 상세히 설명하다"},{"chapter":"21 단원","word":"bud","meaning":"싹을 틔우다, 발아하다; 싹, 눈; 꽃봉오리"},{"chapter":"21 단원","word":"intuition","meaning":"직관(력); 직감"},{"chapter":"21 단원","word":"dominance","meaning":"지배(력), 권세; 우세, 우위"},{"chapter":"21 단원","word":"empirical","meaning":"경험적인, 실증적인"},{"chapter":"21 단원","word":"cue","meaning":"신호; 단서; 신호를 보내다"},{"chapter":"21 단원","word":"obesity","meaning":"비만, 비대"},{"chapter":"21 단원","word":"rationalist","meaning":"이성[합리]주의자"},{"chapter":"21 단원","word":"estimation","meaning":"판단, 평가; 의견; 추정, 견적(액)"},{"chapter":"21 단원","word":"assessment","meaning":"평가[사정]; 평가액"},{"chapter":"21 단원","word":"agenda","meaning":"의제, 안건"},{"chapter":"21 단원","word":"immature","meaning":"미숙한; 미완성의; 미성년"},{"chapter":"21 단원","word":"subsequent","meaning":"그 후의, 뒤이은; 연속되는"},{"chapter":"21 단원","word":"consequent","meaning":"결과로 일어나는; (논리상) 필연의; 결론, 결과"},{"chapter":"21 단원","word":"latitude","meaning":"위도; 지역, 지방; (행동·사상 등의) 허용 범위"},{"chapter":"21 단원","word":"altitude","meaning":"고도, 높이; 높은 곳"},{"chapter":"21 단원","word":"temper","meaning":"기질, 성질; 기분; 차분함, 침착; 완화[경감]하다"},{"chapter":"21 단원","word":"immense","meaning":"거대한, 막대한; 엄청난"},{"chapter":"21 단원","word":"immerse","meaning":"몰입[몰두]하게 하다; (액체에) 가라앉히다, 잠그다"},{"chapter":"21 단원","word":"owe","meaning":"(돈을) 빚지고 있다; ~ 덕분이다, 신세[은혜]를 지고[입고] 있다; ~에게 (어떤 감정을) 품고 있다"},{"chapter":"21 단원","word":"an army of","meaning":"많은 (수의); ~(의) 무리[집단]"},{"chapter":"21 단원","word":"in stock","meaning":"비축되어, 재고로"},{"chapter":"21 단원","word":"at stake","meaning":"성패가 달려 있는, 위태로운"},{"chapter":"21 단원","word":"for one’s own sake","meaning":"~ 자체를 위하여"},{"chapter":"21 단원","word":"specialize in","meaning":"~을 전문으로 하다, ~을 전공하다"},{"chapter":"21 단원","word":"make for","meaning":"~에 도움이 되다; ~ 쪽으로 가다[향하다]"},{"chapter":"22 단원","word":"acquire","meaning":"얻다, 습득하다, (재산 등을) 취득하다"},{"chapter":"22 단원","word":"inhabitant","meaning":"주민, 거주자; 서식 동물"},{"chapter":"22 단원","word":"dedicate","meaning":"(시간·노력을) 바치다, 전념[헌신]하다"},{"chapter":"22 단원","word":"therapist","meaning":"치료 전문가, 치료사"},{"chapter":"22 단원","word":"envelope","meaning":"봉투, 싸는 것; 외피"},{"chapter":"22 단원","word":"envision","meaning":"마음에 그리다, 상상하다"},{"chapter":"22 단원","word":"visualize","meaning":"마음에 그리다, 상상하다; 시각화하다"},{"chapter":"22 단원","word":"capital","meaning":"자본(금), 자산; 수도; 대문자; 자본의, 자산의; 가장 중요한; 수도의; 대문자의"},{"chapter":"22 단원","word":"alignment","meaning":"일직선; 정돈, 정렬; 동맹, 제휴"},{"chapter":"22 단원","word":"disorder","meaning":"어수선함, 무질서; (심신 기능의) 장애"},{"chapter":"22 단원","word":"regime","meaning":"정권; 체제, 제도"},{"chapter":"22 단원","word":"impend","meaning":"(위험 등이) 임박[절박]하다"},{"chapter":"22 단원","word":"abuse","meaning":"악용[남용/오용]하다; 악용[남용/오용]; 학대하다; 모욕하다; 학대; 모욕"},{"chapter":"22 단원","word":"exemplify","meaning":"예증[예시]하다; ~의 좋은 예가 되다"},{"chapter":"22 단원","word":"oblige","meaning":"의무를 지우다, 강요하다; ~에게 은혜를 베풀다"},{"chapter":"22 단원","word":"compel","meaning":"강요[강제]하다, 억지로 시키다"},{"chapter":"22 단원","word":"landfill","meaning":"(쓰레기) 매립지; (쓰레기) 매립"},{"chapter":"22 단원","word":"flash","meaning":"번쩍임, 섬광; 번쩍이다, (빛을) 비추다"},{"chapter":"22 단원","word":"flush","meaning":"붉어지다, 상기되다; (물이) 쏟아져 나오다; 홍조; 물을 왈칵 쏟음"},{"chapter":"22 단원","word":"flesh","meaning":"살, 고기; 육체; 과육"},{"chapter":"22 단원","word":"optical","meaning":"눈의, 시각[시력]의; 광학의"},{"chapter":"22 단원","word":"optimal","meaning":"최선의, 최적의"},{"chapter":"22 단원","word":"optimistic","meaning":"낙관적인, 낙관하는"},{"chapter":"22 단원","word":"draft","meaning":"원고, 초안; 밑그림; 징병, 소집; 끌기, 견인(력); 초안을 작성하다; 밑그림을 그리다; 징병[소집]하다"},{"chapter":"22 단원","word":"at all costs","meaning":"어떤 대가를 치르더라도, 무슨 수를 써서라도"},{"chapter":"22 단원","word":"little more than","meaning":"~에 불과한, ~에 지나지 않는"},{"chapter":"22 단원","word":"at the sight of","meaning":"~을 보고[보자마자]"},{"chapter":"22 단원","word":"be armed with","meaning":"~로 무장하다; ~을 갖추고 있다"},{"chapter":"22 단원","word":"split up","meaning":"~을 분리하다; 헤어지다"},{"chapter":"22 단원","word":"make out","meaning":"~을 이해하다[알다]; 문서 등을) 작성하다"},{"chapter":"23 단원","word":"trample","meaning":"짓밟다, 밟아 뭉개다; 짓밟음"},{"chapter":"23 단원","word":"breathe","meaning":"숨을 쉬다, 호흡하다"},{"chapter":"23 단원","word":"integrate","meaning":"통합되다[시키다]"},{"chapter":"23 단원","word":"molecule","meaning":"분자"},{"chapter":"23 단원","word":"equip","meaning":"(~에 필요물을) 갖추게 하다; 장비하다"},{"chapter":"23 단원","word":"immigration","meaning":"이민, 이주; 이민자; 출입국 심사"},{"chapter":"23 단원","word":"tame","meaning":"길들여진, 순한; 길들이다"},{"chapter":"23 단원","word":"domesticate","meaning":"길들이다, 가축화하다; 재배하다"},{"chapter":"23 단원","word":"overall","meaning":"전체의, 종합[전반]적인; 전체적으로, 종합[전반]적으로"},{"chapter":"23 단원","word":"catastrophic","meaning":"대이변[큰 재앙]의; 파멸적인"},{"chapter":"23 단원","word":"devastating","meaning":"(완전히) 파괴적인, 황폐시키는"},{"chapter":"23 단원","word":"alley","meaning":"골목(길); 오솔길"},{"chapter":"23 단원","word":"indefinite","meaning":"한계가 없는, 무기한의; 분명하지 않은"},{"chapter":"23 단원","word":"accordance","meaning":"일치; 부합; 수여, 인가"},{"chapter":"23 단원","word":"obscure","meaning":"분명하지 않은, 모호한; 무명의; 어두운; 흐릿한; 어둡게 하다; 흐릿하게 하다; 모호하게 하다"},{"chapter":"23 단원","word":"blur","meaning":"흐림; 흐릿한 형체; 흐리게 하다, 흐려지다"},{"chapter":"23 단원","word":"consensus","meaning":"(의견 등의) 일치, 합의"},{"chapter":"23 단원","word":"conscientious","meaning":"양심적인, 성실한"},{"chapter":"23 단원","word":"stack","meaning":"더미[무더기]; 퇴적; 쌓다; 많음, 다량"},{"chapter":"23 단원","word":"stock","meaning":"재고(품); 비축; 주(식), 증권; 가문, 혈통; 종족; 비축하다"},{"chapter":"23 단원","word":"souvenir","meaning":"기념품, 선물"},{"chapter":"23 단원","word":"limb","meaning":"(사람·동물의) 팔[다리], (새의) 날개; (나무의) 큰 가지"},{"chapter":"23 단원","word":"limp","meaning":"기운이 없는, 축 처진; 절뚝거리다; 느릿느릿 가다; 절뚝거림"},{"chapter":"23 단원","word":"odd","meaning":"이상한, 특이한; 가끔[이따금]의; 홀수의, 한 짝의; 남은, 여분의"},{"chapter":"23 단원","word":"attend to","meaning":"~을 돌보다; ~에 주의를 기울이다"},{"chapter":"23 단원","word":"look out for","meaning":"~을 조심하다, ~에 주의하다"},{"chapter":"23 단원","word":"at variance with","meaning":"~과 상충하는; ~와 사이가 안 좋은"},{"chapter":"23 단원","word":"from one’s point of view","meaning":"~의 관점에서 보면"},{"chapter":"23 단원","word":"take ~ seriously","meaning":"~을 진지하게[심각하게] 생각하다"},{"chapter":"23 단원","word":"read between the lines","meaning":"행간을 읽다, 속뜻을 읽다"},{"chapter":"24 단원","word":"crop","meaning":"(농)작물; 수확량; 자르다; (농작물을) 수확하다; 재배하다"},{"chapter":"24 단원","word":"harvest","meaning":"수확, 추수; 수확물; 수확하다; 채취하다"},{"chapter":"24 단원","word":"statistic","meaning":"통계치, 통계량"},{"chapter":"24 단원","word":"mechanical","meaning":"기계의; 기계로 작동되는; 기계학[역학]의"},{"chapter":"24 단원","word":"mysterious","meaning":"신비한; 불가사의한; 비밀의"},{"chapter":"24 단원","word":"equivalent","meaning":"같은; 상당[대응]하는; (~과) 같은 것; 대응물"},{"chapter":"24 단원","word":"inherit","meaning":"상속받다; (유전적으로) 물려받다"},{"chapter":"24 단원","word":"transmission","meaning":"전달[전파]; 전염; 송신; 방송"},{"chapter":"24 단원","word":"drastic","meaning":"급격한; 과감한, 극단적인"},{"chapter":"24 단원","word":"gradual","meaning":"점진적인, 서서히 일어나는"},{"chapter":"24 단원","word":"caterpillar","meaning":"애벌레, 모충"},{"chapter":"24 단원","word":"acoustic","meaning":"음향의; 청각의"},{"chapter":"24 단원","word":"fetus","meaning":"(임신 9주후의) 태아"},{"chapter":"24 단원","word":"reinforcement","meaning":"보강, 강화; 보강재"},{"chapter":"24 단원","word":"altruist","meaning":"이타주의자"},{"chapter":"24 단원","word":"inevitability","meaning":"불가피함, 필연성"},{"chapter":"24 단원","word":"intake","meaning":"섭취(량), 흡입(량); (입학·채용 등의) 인원수"},{"chapter":"24 단원","word":"deplete","meaning":"격감시키다; 고갈시키다"},{"chapter":"24 단원","word":"replete","meaning":"가득 찬, 충만한; 포식을 한"},{"chapter":"24 단원","word":"marvel","meaning":"놀라운 일, 경이; 놀라다, 경탄하다"},{"chapter":"24 단원","word":"marble","meaning":"대리석; 구슬; 대리석의"},{"chapter":"24 단원","word":"improvise","meaning":"즉석에서 하다[만들다]; 즉흥 연주를 하다"},{"chapter":"24 단원","word":"impoverish","meaning":"가난하게 하다; (질을) 떨어뜨리다, 저하시키다"},{"chapter":"24 단원","word":"prompt","meaning":"즉석의, 즉각적인; 신속한, 기민한; 시간을 엄수하는; 자극하다, 촉진하다; (사상·감정을) 불어넣다"},{"chapter":"24 단원","word":"attribute to","meaning":"~ 때문이라 여기다, ~ 덕분으로 돌리다"},{"chapter":"24 단원","word":"make room for","meaning":"~을 위한 공간을 만들다; ~에게 자리를 양보하다"},{"chapter":"24 단원","word":"be accompanied by","meaning":"~와 동반하다; ~을 수반하다"},{"chapter":"24 단원","word":"in retrospect","meaning":"돌이켜 생각해 보면"},{"chapter":"24 단원","word":"take the place of","meaning":"~을 대신[대리]하다"},{"chapter":"24 단원","word":"rip away","meaning":"~을 떼내다[벗기다]"},{"chapter":"25 단원","word":"evolution","meaning":"진화; 발전, 진전"},{"chapter":"25 단원","word":"aesthetic","meaning":"미학적인, 미적인; 미적 특질, 미학"},{"chapter":"25 단원","word":"merchant","meaning":"상인"},{"chapter":"25 단원","word":"privilege","meaning":"특권, 특혜; ~에게 특권을 주다"},{"chapter":"25 단원","word":"magnify","meaning":"확대하다; 과장하다"},{"chapter":"25 단원","word":"exaggerate","meaning":"과장하다; 지나치게 강조하다"},{"chapter":"25 단원","word":"animate","meaning":"생명을 주다; 활기를 띠게 하다; 만화 영화로 하다; 생명이 있는; 활기 있는"},{"chapter":"25 단원","word":"inspection","meaning":"조사, 점검; 시찰"},{"chapter":"25 단원","word":"leak","meaning":"누출; 새는 곳; (비밀의) 누설[유출]; 새다, 새게 하다; 누설[유출]하다"},{"chapter":"25 단원","word":"enlightenment","meaning":"계몽[계발]; 계몽 운동; 깨달음, 이해"},{"chapter":"25 단원","word":"insight","meaning":"통찰력; 이해, 간파"},{"chapter":"25 단원","word":"chamber","meaning":"방, (특정 목적용) 실"},{"chapter":"25 단원","word":"flourish","meaning":"번성[번영]하다; (동식물이) 성장하다, 무성하다"},{"chapter":"25 단원","word":"remark","meaning":"주목, 인지; 주목하다, 인지하다; 언급, 논평; 언급하다, 논하다"},{"chapter":"25 단원","word":"intensity","meaning":"강렬함, 격렬함; 강도, 세기"},{"chapter":"25 단원","word":"severity","meaning":"격렬, 혹독; 엄격, 엄함"},{"chapter":"25 단원","word":"turmoil","meaning":"혼란; 소란[소동]"},{"chapter":"25 단원","word":"adapt","meaning":"적응하다, 순응시키다; 각색[편곡]하다"},{"chapter":"25 단원","word":"adopt","meaning":"채택하다, 받아들이다; 입양하다"},{"chapter":"25 단원","word":"despise","meaning":"경멸하다, 멸시하다; 혐오하다"},{"chapter":"25 단원","word":"despite","meaning":"prep. ~에도 불구하고"},{"chapter":"25 단원","word":"reside","meaning":"살다, 거주하다; 존재하다, 있다"},{"chapter":"25 단원","word":"resign","meaning":"사직[사임]하다; (권리 등을) 포기하다"},{"chapter":"25 단원","word":"bear","meaning":"참다, 견디다; (무게를) 지탱하다; (아이를) 낳다; (열매를) 맺다; (책임 등을) 감당하다, 떠맡다; (칭호·특징 등을) 가지다, 지니다"},{"chapter":"25 단원","word":"be obliged to do","meaning":"~해야 하다, 하는 수 없이 ~하다"},{"chapter":"25 단원","word":"miss out on","meaning":"~을 놓치다"},{"chapter":"25 단원","word":"be comprised of","meaning":"~으로 구성되다[이루어지다]"},{"chapter":"25 단원","word":"get in the way of","meaning":"~에 방해가 되다"},{"chapter":"25 단원","word":"tear down","meaning":"~을 허물다[철거하다]; ~을 파괴하다"},{"chapter":"25 단원","word":"rob ~ of …","meaning":"~에게서 …을 앗아 가다"},{"chapter":"26 단원","word":"intelligence","meaning":"지능, 사고력; 지성; 정보, 기밀"},{"chapter":"26 단원","word":"appeal","meaning":"간청[애원]하다; (법 등에) 호소하다; 흥미[관심]를 끌다; 간청[애원]; 호소; 매력"},{"chapter":"26 단원","word":"formula","meaning":"공식, 식; (일정한) 방식, 법칙"},{"chapter":"26 단원","word":"myth","meaning":"신화; 근거 없는 믿음, 통념"},{"chapter":"26 단원","word":"scatter","meaning":"(흩)뿌리다, 살포하다; 흩어지다, 흐트러뜨리다"},{"chapter":"26 단원","word":"assemble","meaning":"모이다, 모으다, 집합시키다; (기계 등을) 조립하다"},{"chapter":"26 단원","word":"forage","meaning":"(식량·먹이를) 찾아 돌아다니다; (소·말의) 사료"},{"chapter":"26 단원","word":"mandate","meaning":"(권한) 위임; ~에게 권한을 위임하다; 명령[지시]; 명령[지시]하다"},{"chapter":"26 단원","word":"landmark","meaning":"획기적인 사건[발견]; 주요 지형지물, 역사적 건물"},{"chapter":"26 단원","word":"monument","meaning":"기념비; 유물, 유적"},{"chapter":"26 단원","word":"foliage","meaning":"(한 그루 초목의) 잎"},{"chapter":"26 단원","word":"commentary","meaning":"논평; 해설"},{"chapter":"26 단원","word":"parameter","meaning":"한도[한계]; (한정) 요소; 매개 변수"},{"chapter":"26 단원","word":"fond","meaning":"좋아하는; 애정이 담긴, 다정한"},{"chapter":"26 단원","word":"appoint","meaning":"임명[지명]하다; (시간·장소를) 정하다"},{"chapter":"26 단원","word":"designate","meaning":"지시[명시]하다; 지명[임명]하다; 지정하다"},{"chapter":"26 단원","word":"undertake","meaning":"떠맡다, 책임을 지다; 착수하다"},{"chapter":"26 단원","word":"crave","meaning":"갈망[열망]하다"},{"chapter":"26 단원","word":"carve","meaning":"새기다, 조각하다"},{"chapter":"26 단원","word":"stationary","meaning":"정지한; 고정된; 변화가 없는"},{"chapter":"26 단원","word":"stationery","meaning":"문구류; 문방구"},{"chapter":"26 단원","word":"overlook","meaning":"내려다보다; 간과하다; 눈감아 주다; 감독[감시]하다"},{"chapter":"26 단원","word":"overload","meaning":"과적하다; 지나치게 부담시키다; 과적, 과부하"},{"chapter":"26 단원","word":"spell","meaning":"철자를 말하다[쓰다]; 주문, 마법; 매력, 매혹; 잠깐의 시간, 한동안"},{"chapter":"26 단원","word":"draw on","meaning":"~을 활용하다; ~에 의지하다"},{"chapter":"26 단원","word":"on hand","meaning":"이용할 수 있는, 구할[얻을] 수 있는"},{"chapter":"26 단원","word":"be confined to","meaning":"~에 국한[한정]되다"},{"chapter":"26 단원","word":"get over","meaning":"(곤란을) 극복하다, ~을 넘다; (병에서) 회복되다"},{"chapter":"26 단원","word":"the other way around","meaning":"반대로, 거꾸로"},{"chapter":"26 단원","word":"rush out of","meaning":"~로부터 (급히) 달려 나오다, ~로부터 빠져나오다"},{"chapter":"27 단원","word":"suppose","meaning":"가정하다, 상상하다; 생각하다, 추정하다"},{"chapter":"27 단원","word":"foster","meaning":"촉진하다, 육성[조장]하다; 기르다, 양육하다"},{"chapter":"27 단원","word":"gratify","meaning":"기쁘게 하다; 만족[충족]시키다"},{"chapter":"27 단원","word":"partial","meaning":"부분적인, 불완전한; 편애하는; 편파적인"},{"chapter":"27 단원","word":"suburb","meaning":"교외, 근교"},{"chapter":"27 단원","word":"fungus","meaning":"균류, 곰팡이류; 버섯(pl. fungi)"},{"chapter":"27 단원","word":"manifest","meaning":"명백한, 분명한; 명시하다; (감정 등을) 표명하다; 증명하다; (재귀적 용법) 나타내다"},{"chapter":"27 단원","word":"facilitate","meaning":"가능하게[용이하게] 하다; 촉진하다"},{"chapter":"27 단원","word":"confrontation","meaning":"대치, 직면"},{"chapter":"27 단원","word":"penetrate","meaning":"관통하다, 침투하다; (의미 등을) 간파하다"},{"chapter":"27 단원","word":"pierce","meaning":"뚫다, 관통하다; 간파하다, 통찰하다"},{"chapter":"27 단원","word":"intersection","meaning":"가로지름, 교차; 교차 지점"},{"chapter":"27 단원","word":"uneven","meaning":"평평하지 않은, 울퉁불퉁한; 불규칙한; 고르지 않은"},{"chapter":"27 단원","word":"ridiculous","meaning":"우스운; 터무니없는"},{"chapter":"27 단원","word":"armor","meaning":"갑옷; ~에게 갑옷을 입히다"},{"chapter":"27 단원","word":"antagonistic","meaning":"적대적인, 반대의"},{"chapter":"27 단원","word":"hostile","meaning":"적의; 적대하는, 반대하는"},{"chapter":"27 단원","word":"vein","meaning":"정맥; 혈관; (식물의) 잎맥"},{"chapter":"27 단원","word":"vain","meaning":"헛된, 무익한; 자만심이 강한, 허영적인"},{"chapter":"27 단원","word":"simulate","meaning":"가장하다, 흉내 내다; 모의 실험[시뮬레이션]하다"},{"chapter":"27 단원","word":"stimulate","meaning":"자극[고무]하다; 기운을 돋우다"},{"chapter":"27 단원","word":"probe","meaning":"철저히 조사하다, 탐사[탐구]하다; 철저한 조사; 무인 우주 탐사선"},{"chapter":"27 단원","word":"prove","meaning":"입증[증명]하다, ~으로 판명되다"},{"chapter":"27 단원","word":"bow","meaning":"절하다, (고개를) 숙이다; 굴종[굴복]하다; 절, 인사; (바이올린 등을) 활로 연주하다[켜다]; 활; 곡선; 나비 매듭"},{"chapter":"27 단원","word":"in accordance with","meaning":"~에 따라(서), ~에 부합되게"},{"chapter":"27 단원","word":"out of the blue","meaning":"갑자기, 난데없이"},{"chapter":"27 단원","word":"be curious about","meaning":"~을 궁금해하다, ~을 알고 싶다"},{"chapter":"27 단원","word":"give in to","meaning":"(~에) 굴복[항복]하다"},{"chapter":"27 단원","word":"to the extent that","meaning":"~하는 정도까지, ~의 범위에서"},{"chapter":"27 단원","word":"rush through","meaning":"~을 서둘러 처리하다"},{"chapter":"28 단원","word":"reputation","meaning":"평판, 명성"},{"chapter":"28 단원","word":"prestige","meaning":"위신, 명성; 위신 있는, 일류의"},{"chapter":"28 단원","word":"grab","meaning":"붙잡다, 움켜잡다; 가로채다, 횡령하다; 잡아채기, 움켜쥐기; 강탈, 횡령"},{"chapter":"28 단원","word":"plasticity","meaning":"가소성; 적응성, 유연성"},{"chapter":"28 단원","word":"theorist","meaning":"이론가"},{"chapter":"28 단원","word":"gut","meaning":"소화관; 장(腸); (pl.)용기, 배짱; 직감; 직감에 따른"},{"chapter":"28 단원","word":"metaphorical","meaning":"은유[비유]의"},{"chapter":"28 단원","word":"utensil","meaning":"(가정에서 사용하는) 기구, 도구"},{"chapter":"28 단원","word":"setback","meaning":"방해, 차질; 좌절, 패배"},{"chapter":"28 단원","word":"reversal","meaning":"반전, 역전; 좌절, 실패"},{"chapter":"28 단원","word":"wreckage","meaning":"난파, 난선; (난파선의) 잔해"},{"chapter":"28 단원","word":"nutritional","meaning":"영양(상)의"},{"chapter":"28 단원","word":"decode","meaning":"(암호를) 해독하다; 의미를 이해하다"},{"chapter":"28 단원","word":"affection","meaning":"애착, 호의; (pl.)애정; 감정, 기분"},{"chapter":"28 단원","word":"scope","meaning":"(관찰·활동의) 범위, 영역; 기회, 여지; 조사하다"},{"chapter":"28 단원","word":"artifact","meaning":"인공물; 공예품"},{"chapter":"28 단원","word":"niche","meaning":"(꼭 알맞은) 지위[자리], 적소; (시장의) 틈새"},{"chapter":"28 단원","word":"friction","meaning":"마찰 (저항); 알력, 불화"},{"chapter":"28 단원","word":"fraction","meaning":"부분, 일부; 아주 조금; 파편; 분수"},{"chapter":"28 단원","word":"ascribe","meaning":"(원인·기원을) ~에 돌리다; ~에 속하는 것으로 생각하다"},{"chapter":"28 단원","word":"inscribe","meaning":"쓰다, 새기다; 헌정[증정]하다"},{"chapter":"28 단원","word":"exploration","meaning":"탐험[답사]; 탐구"},{"chapter":"28 단원","word":"exploitation","meaning":"개발, 개척; 이용, 착취"},{"chapter":"28 단원","word":"appreciation","meaning":"진가를 알기, 올바른 인식; 감상, 이해; 감사, 존중; (상황·인물에 대한) 평가, 의견"},{"chapter":"28 단원","word":"in the long run","meaning":"결국, 마침내"},{"chapter":"28 단원","word":"put together","meaning":"~을 합하다; ~을 조립하다; ~을 준비하다[만들다]"},{"chapter":"28 단원","word":"be dedicated to","meaning":"~에 전념하다"},{"chapter":"28 단원","word":"commit oneself to","meaning":"~에 전념[헌신]하다"},{"chapter":"28 단원","word":"have ~ in mind","meaning":"~을 염두에 두다[생각하다]"},{"chapter":"28 단원","word":"scale up","meaning":"(크기·규모를) 확대하다[늘리다]"},{"chapter":"29 단원","word":"ultimate","meaning":"궁극적인, 최후의; 근본[기본]적인; 궁극의 것, 최종 결과; 근본 원리"},{"chapter":"29 단원","word":"threaten","meaning":"위협[협박]하다"},{"chapter":"29 단원","word":"impulse","meaning":"충동, 자극; 충격"},{"chapter":"29 단원","word":"urge","meaning":"재촉[촉구]하다; 강요하다; 격려[권유]하다; (강한) 욕구, 충동"},{"chapter":"29 단원","word":"irrelevant","meaning":"무관한, 부적절한"},{"chapter":"29 단원","word":"manuscript","meaning":"원고; 필사본"},{"chapter":"29 단원","word":"pivotal","meaning":"회전축의; 중추적인, 중요한"},{"chapter":"29 단원","word":"ally","meaning":"동맹국; (pl.)연합국; 동맹[협력]자; 동맹을 맺다, 연합하다"},{"chapter":"29 단원","word":"hindrance","meaning":"방해, 저해; 장애물"},{"chapter":"29 단원","word":"obstacle","meaning":"장애(물), 방해(물)"},{"chapter":"29 단원","word":"sculptor","meaning":"조각가"},{"chapter":"29 단원","word":"aspirational","meaning":"열망[대망]의"},{"chapter":"29 단원","word":"tropic","meaning":"회귀선(回歸線); (pl.)열대지방; 열대의"},{"chapter":"29 단원","word":"conversion","meaning":"전환, 개조; 개종"},{"chapter":"29 단원","word":"paralysis","meaning":"마비; 중풍; 무(기)력, 불능"},{"chapter":"29 단원","word":"cuisine","meaning":"요리; 요리법"},{"chapter":"29 단원","word":"pitfall","meaning":"함정; 위험[곤란]"},{"chapter":"29 단원","word":"endeavor","meaning":"노력, 시도; 노력하다, 시도하다"},{"chapter":"29 단원","word":"endear","meaning":"~의 사랑[호감]을 받게 하다"},{"chapter":"29 단원","word":"futile","meaning":"헛된, 무익한"},{"chapter":"29 단원","word":"fertile","meaning":"(땅이) 비옥한, 기름진; (사람·동식물이) 번식력이 있는, 다산인"},{"chapter":"29 단원","word":"fragment","meaning":"(부서진) 조각, 파편; 단편; 산산이 부서지다"},{"chapter":"29 단원","word":"fragrant","meaning":"향기로운; 방향성의"},{"chapter":"29 단원","word":"secure","meaning":"안전한, 튼튼한; 안심[확신]하는; 보증된, 걱정 없는; 안전하게 하다, 고정시키다; 얻어 내다, 확보[획득]하다"},{"chapter":"29 단원","word":"in turn","meaning":"차례차례; 결국[결과적으로]"},{"chapter":"29 단원","word":"range from ~ to ...","meaning":"(범위가) ~에서 …까지 이르다"},{"chapter":"29 단원","word":"be in charge of","meaning":"~을 담당하다[맡다]"},{"chapter":"29 단원","word":"have to do with","meaning":"~과 관계가 있다"},{"chapter":"29 단원","word":"try out","meaning":"~을 시도[시험]해 보다"},{"chapter":"29 단원","word":"set aside","meaning":"~을 떼어 놓다, 따로 두다; ~을 고려하지 않다[무시하다]"},{"chapter":"30 단원","word":"assumption","meaning":"가정, 추정; 떠맡기, 인수"},{"chapter":"30 단원","word":"inference","meaning":"추론, 추리; 추정; 함축된 의미"},{"chapter":"30 단원","word":"deny","meaning":"부인[부정]하다; 거절하다, 주지 않다"},{"chapter":"30 단원","word":"maintenance","meaning":"유지; 보수 (관리)"},{"chapter":"30 단원","word":"reference","meaning":"언급 (대상); 참고, 참조; 문의, 조회"},{"chapter":"30 단원","word":"assert","meaning":"주장[옹호]하다, 단언하다"},{"chapter":"30 단원","word":"marginalize","meaning":"사회에서 소외하다"},{"chapter":"30 단원","word":"paradoxical","meaning":"역설적인; 모순된"},{"chapter":"30 단원","word":"overlap","meaning":"겹치다, 겹쳐지다; 중복되다; 중복 (부분)"},{"chapter":"30 단원","word":"misperception","meaning":"오인, 오해"},{"chapter":"30 단원","word":"dazzle","meaning":"눈부시게 하다; 현혹시키다; 눈부심; 현혹"},{"chapter":"30 단원","word":"precedent","meaning":"선례, 전례; 관례"},{"chapter":"30 단원","word":"alteration","meaning":"변경, 개조; 변화"},{"chapter":"30 단원","word":"retention","meaning":"보유, 유지; 기억; 기억력"},{"chapter":"30 단원","word":"induce","meaning":"설득[권유]하다; 유발[초래]하다"},{"chapter":"30 단원","word":"trigger","meaning":"(사건·반응 등을) 유발하다; (방아쇠를) 당기다; 계기, 도화선; 방아쇠"},{"chapter":"30 단원","word":"obsess","meaning":"사로잡다, 집착하게 하다"},{"chapter":"30 단원","word":"obese","meaning":"비만의, 뚱뚱한"},{"chapter":"30 단원","word":"ratio","meaning":"비율, 비(比)"},{"chapter":"30 단원","word":"ration","meaning":"배급[할당]하다; 배급[할당]량"},{"chapter":"30 단원","word":"dismay","meaning":"경악, 당황; 실망; 당황하게 만들다; 크게 실망시키다"},{"chapter":"30 단원","word":"fuse","meaning":"녹이다, 융해하다; 결합[융합]되다[시키다]; (폭약의) 도화선; 퓨즈"},{"chapter":"30 단원","word":"fuss","meaning":"호들갑, 야단법석; 법석[호들갑]을 떨다"},{"chapter":"30 단원","word":"plain","meaning":"분명한, 명백한; 간단한, 알기 쉬운; 솔직한, 숨김[꾸밈]없는; 평범한, 소박한; (pl.)평원, 평지"},{"chapter":"30 단원","word":"look up","meaning":"(정보 등을) 찾아보다; 올려다보다"},{"chapter":"30 단원","word":"resort to","meaning":"~에 의지하다[기대다]; ~에 호소하다"},{"chapter":"30 단원","word":"be in one’s shoes","meaning":"~의 입장이 되어 (보다)"},{"chapter":"30 단원","word":"hold on to","meaning":"~을 고수하다[지키다]; ~을 계속 보유하다"},{"chapter":"30 단원","word":"turn into","meaning":"~으로 변하다, ~이 되다"},{"chapter":"30 단원","word":"set forth","meaning":"출발하다, (여행길에) 오르다; (의견을) 말하다[발표하다]"},{"chapter":"31 단원","word":"fundamental","meaning":"근본[기본]적인; 중요[주요]한; 근본[기본]; 원칙"},{"chapter":"31 단원","word":"stimulus","meaning":"자극, 격려; 자극제(pl. stimuli)"},{"chapter":"31 단원","word":"endemic","meaning":"지방 특유의, 풍토성의; 지방병, 풍토병"},{"chapter":"31 단원","word":"influential","meaning":"영향력 있는; 유력한; 영향력을 가진 사람"},{"chapter":"31 단원","word":"peasant","meaning":"농부, 소작농; 농민의"},{"chapter":"31 단원","word":"permanent","meaning":"영구[영속]적인"},{"chapter":"31 단원","word":"fleeting","meaning":"잠깐의; 덧없는"},{"chapter":"31 단원","word":"multitude","meaning":"다수, 대량; 군중, 많은 사람"},{"chapter":"31 단원","word":"deception","meaning":"속임(수), 기만; 사기"},{"chapter":"31 단원","word":"integrity","meaning":"성실, 정직, 청렴; 완전(한 상태)"},{"chapter":"31 단원","word":"premise","meaning":"전제, 가정; 전제로 하다, 가정하다"},{"chapter":"31 단원","word":"humiliate","meaning":"굴욕감을 느끼게 하다, 창피를 주다"},{"chapter":"31 단원","word":"deteriorate","meaning":"나빠지다, 악화되다[시키다]"},{"chapter":"31 단원","word":"proprietary","meaning":"소유(자)의; 독점의"},{"chapter":"31 단원","word":"meadow","meaning":"목초지, 초원"},{"chapter":"31 단원","word":"procession","meaning":"행렬, 행진; 진행"},{"chapter":"31 단원","word":"wage","meaning":"임금, 급료; (전쟁·투쟁을) 행하다"},{"chapter":"31 단원","word":"council","meaning":"회의; (지방) 의회, 협의회"},{"chapter":"31 단원","word":"counsel","meaning":"상담, 의논; 조언, 충고; 상담하다; 조언하다, 충고하다"},{"chapter":"31 단원","word":"commerce","meaning":"상업; 무역"},{"chapter":"31 단원","word":"commence","meaning":"시작되다[하다]"},{"chapter":"31 단원","word":"fright","meaning":"공포, 경악"},{"chapter":"31 단원","word":"freight","meaning":"화물; 화물 운송; 화물을 싣다; 운송하다"},{"chapter":"31 단원","word":"plot","meaning":"줄거리, 구상; 음모, 계략; 작은 땅, 대지; 줄거리를 만들다; 음모를 꾸미다"},{"chapter":"31 단원","word":"rule out","meaning":"~을 제외시키다[배제하다]; ~을 불가능하게 하다"},{"chapter":"31 단원","word":"for the benefit of","meaning":"~를 위하여, ~의 이익을 위하여"},{"chapter":"31 단원","word":"on behalf of","meaning":"~를 대신[대표]하여; ~를 위하여"},{"chapter":"31 단원","word":"pass away","meaning":"사망하다; (존재하던 것이) 없어지다"},{"chapter":"31 단원","word":"wear out","meaning":"닳다, ~을 닳게 하다; ~을 지치게 하다"},{"chapter":"31 단원","word":"settle in","meaning":"(새집·직장 등에) 적응하다"},{"chapter":"32 단원","word":"representation","meaning":"묘사, 표현; 대리, 대표; 초상(화), 이미지"},{"chapter":"32 단원","word":"disaster","meaning":"재난, 재해; 불행; 큰 실패"},{"chapter":"32 단원","word":"violate","meaning":"위반하다, 어기다; 침해하다, 침입하다"},{"chapter":"32 단원","word":"mediation","meaning":"조정[중재], 매개; 화해"},{"chapter":"32 단원","word":"victim","meaning":"희생(자), 피해자; 제물"},{"chapter":"32 단원","word":"offender","meaning":"범죄자, 위반자"},{"chapter":"32 단원","word":"candidate","meaning":"후보[출마자]; 지원자"},{"chapter":"32 단원","word":"intervene","meaning":"개입하다, 중재[조정]하다; (사이에) 끼어들다"},{"chapter":"32 단원","word":"physiology","meaning":"생리학; 생리 (기능)"},{"chapter":"32 단원","word":"poisonous","meaning":"독이 든, 유독[유해]한"},{"chapter":"32 단원","word":"prevalent","meaning":"널리 퍼진, 유행하고 있는; 우세한, 유력한"},{"chapter":"32 단원","word":"antibiotic","meaning":"항생제, 항생 물질; 항생 작용의"},{"chapter":"32 단원","word":"soothe","meaning":"달래다, 진정시키다; (고통 등을) 덜어 주다"},{"chapter":"32 단원","word":"startle","meaning":"깜짝 놀라게 하다, 깜짝 놀라다"},{"chapter":"32 단원","word":"barter","meaning":"물물 교환하다, 교역하다; 물물 교환, 교역"},{"chapter":"32 단원","word":"adhere","meaning":"들러붙다, 부착하다; 집착하다, 고수하다"},{"chapter":"32 단원","word":"flake","meaning":"얇은 조각, 파편; 벗겨지다; 떨어지다"},{"chapter":"32 단원","word":"detest","meaning":"몹시 싫어하다, 혐오하다"},{"chapter":"32 단원","word":"detect","meaning":"찾아내다, 발견하다; 감지[탐지]하다"},{"chapter":"32 단원","word":"regain","meaning":"되찾다, 회복하다; 되돌아가다, 복귀하다"},{"chapter":"32 단원","word":"retain","meaning":"보유[유지]하다; 기억해 두다"},{"chapter":"32 단원","word":"suppress","meaning":"억누르다, 진압하다; 금지[폐지]하다; 숨기다, 은폐하다"},{"chapter":"32 단원","word":"surpass","meaning":"~보다 낫다, 능가하다; (범위·한계에서) 넘다"},{"chapter":"32 단원","word":"sheer","meaning":"순전한, 완전한; (직물이) 비치는, 매우 얇은; 깎아지른 듯한, 몹시 가파른"},{"chapter":"32 단원","word":"put ~ in perspective","meaning":"~을 전체적인 시야에서 보다"},{"chapter":"32 단원","word":"set out","meaning":"출발하다, (여행을) 시작하다; 착수하다"},{"chapter":"32 단원","word":"be true for","meaning":"~에 해당하다[적용되다]"},{"chapter":"32 단원","word":"identify with","meaning":"~와 동일시하다[동질감을 갖다]"},{"chapter":"32 단원","word":"be engaged in","meaning":"~에 몰두하다, ~으로 바쁘다; ~에 종사하다"},{"chapter":"32 단원","word":"slip one’s mind","meaning":"잊어버리다, 생각나지 않다"},{"chapter":"33 단원","word":"agent","meaning":"대리[중개]인; 행위자, 주체; 첩자, 스파이; 요인, 동인(動因)"},{"chapter":"33 단원","word":"emphasis","meaning":"강조, 역설; 주안점"},{"chapter":"33 단원","word":"accommodate","meaning":"숙박시키다, 수용하다; 편의를 도모하다; (환경 등에) 적응하다[시키다]"},{"chapter":"33 단원","word":"constitution","meaning":"구성, 구조, 조직; 체질, 성질; 헌법; 규약"},{"chapter":"33 단원","word":"certificate","meaning":"증명서; 자격증; 인증하다; 증명서를 주다"},{"chapter":"33 단원","word":"magnitude","meaning":"(큰) 규모, 크기; 중요성; 위대함"},{"chapter":"33 단원","word":"restriction","meaning":"제한[한정]; 제약, 규정"},{"chapter":"33 단원","word":"constraint","meaning":"강제, 압박; 제한, 속박"},{"chapter":"33 단원","word":"primitive","meaning":"원시 (시대)의, 원시적인; 유치한, 소박한"},{"chapter":"33 단원","word":"straightforward","meaning":"똑바른, 똑바로 향한; 정직한, 솔직한; 간단한, 쉬운"},{"chapter":"33 단원","word":"outweigh","meaning":"~보다 중요하다, 능가하다; ~보다 무겁다[크다]"},{"chapter":"33 단원","word":"override","meaning":"~보다 우위에 서다, ~에 우선하다; 무시하다; 무효화하다"},{"chapter":"33 단원","word":"deed","meaning":"행위[행동]; 공적, 위업"},{"chapter":"33 단원","word":"arbitrary","meaning":"임의의, 제멋대로인; 독단적인, 전제적인"},{"chapter":"33 단원","word":"specify","meaning":"명시하다, 명확히[구체적으로] 말하다"},{"chapter":"33 단원","word":"burrow","meaning":"(토끼 등의) 굴, 은신처; (구멍·굴을) 파다"},{"chapter":"33 단원","word":"imprison","meaning":"투옥[수감]하다; 감금하다"},{"chapter":"33 단원","word":"emergency","meaning":"비상[긴급] 사태"},{"chapter":"33 단원","word":"emergence","meaning":"발생, 출현; 탈출"},{"chapter":"33 단원","word":"devour","meaning":"게걸스레 먹다; 집어삼키다, 파괴하다"},{"chapter":"33 단원","word":"detour","meaning":"우회; 우회로; 둘러 가다, 우회하다"},{"chapter":"33 단원","word":"banish","meaning":"추방하다, 유배를 보내다; 쫓아 버리다; (걱정 등을) 덜어 없애다"},{"chapter":"33 단원","word":"vanish","meaning":"사라지다, 자취를 감추다"},{"chapter":"33 단원","word":"stake","meaning":"말뚝, 화형대; 이해관계; (내기·도박 등에) 건 돈; (pl.)상금; 말뚝에 매다; (돈·생명 등을) 걸다"},{"chapter":"33 단원","word":"rest on","meaning":"~에 기초하다; ~에 달려 있다[의지하다]"},{"chapter":"33 단원","word":"settle down","meaning":"정착하다; 진정되다[시키다]"},{"chapter":"33 단원","word":"in a snap","meaning":"순식간에, 당장에"},{"chapter":"33 단원","word":"squeeze in","meaning":"~을 위한 짬을 내다; ~에 비집고 들어가다"},{"chapter":"33 단원","word":"break into","meaning":"~에 침입하다; (갑자기) ~하기 시작하다"},{"chapter":"33 단원","word":"trace back to","meaning":"기원을 ~로 거슬러 추적하다"},{"chapter":"34 단원","word":"evaluate","meaning":"평가[감정]하다"},{"chapter":"34 단원","word":"glow","meaning":"불빛; 빛나다, 빛을 내다; 홍조; 상기되다, 발개지다"},{"chapter":"34 단원","word":"compensate","meaning":"보상하다; 보충[벌충]하다; (보수·급료를) 지불하다"},{"chapter":"34 단원","word":"crack","meaning":"금; 날카로운 소리; 금이 가다, 금이 가게 하다; 날카로운 소리를 내다"},{"chapter":"34 단원","word":"copyright","meaning":"저작권[판권]; 저작권[판권]이 있는; 저작권으로 보호하다"},{"chapter":"34 단원","word":"metabolic","meaning":"(신진) 대사의"},{"chapter":"34 단원","word":"spice","meaning":"양념, 향신료; 흥취, 묘미; 양념을 치다"},{"chapter":"34 단원","word":"rage","meaning":"격노, 분노; (비·바람 등의) 격렬, 맹렬; 격노하다; 사납게 휘몰아치다"},{"chapter":"34 단원","word":"diagnose","meaning":"(병을) 진단하다; (문제 등의) 원인을 분석하다"},{"chapter":"34 단원","word":"propel","meaning":"나아가게 하다, 추진하다; 촉구하다, 몰아대다"},{"chapter":"34 단원","word":"assault","meaning":"공격, 폭행; 공격하다, 폭행하다"},{"chapter":"34 단원","word":"imposition","meaning":"부과, 과하기; 부과물; 세금; 부담[짐]"},{"chapter":"34 단원","word":"spectator","meaning":"관중, 구경꾼; 방관자"},{"chapter":"34 단원","word":"carbohydrate","meaning":"탄수화물"},{"chapter":"34 단원","word":"nasty","meaning":"더러운, 불결한; (맛·냄새 등이) 메스꺼운, 역겨운; 심술궂은, 악의가 있는"},{"chapter":"34 단원","word":"foul","meaning":"더러운, 불결한; 상스러운; 반칙의, 부정한; 더럽히다; 부패하다; 반칙을 범하다; 반칙, 부정행위"},{"chapter":"34 단원","word":"nomad","meaning":"유목민; 방랑자"},{"chapter":"34 단원","word":"reap","meaning":"거두다, 수확하다"},{"chapter":"34 단원","word":"leap","meaning":"뛰다, 도약하다; 급격히 상승하다; 도약; 급증, 급등"},{"chapter":"34 단원","word":"impart","meaning":"(정보·비밀 등을) 알리다, 전하다; (나누어) 주다"},{"chapter":"34 단원","word":"import","meaning":"수입하다, 들여오다; 수입(품)"},{"chapter":"34 단원","word":"gasp","meaning":"헐떡거림; 숨 막힘; 헐떡거리다; 숨이 막히다"},{"chapter":"34 단원","word":"grasp","meaning":"붙잡다, 움켜쥐다; 붙잡기; 파악하다, 이해하다; 파악, 이해"},{"chapter":"34 단원","word":"mass","meaning":"덩어리; 다수, 다량; 대부분; 무리, 집단; (pl.)대중; 질량; 크기, 부피; 대량의; 대중의; 대규모의"},{"chapter":"34 단원","word":"stand up to","meaning":"~에 맞서다[저항하다]"},{"chapter":"34 단원","word":"show up","meaning":"나타나다, 나타내 보이다"},{"chapter":"34 단원","word":"beyond one’s reach","meaning":"~의 손이 닿지 않는 (곳에), ~의 힘이 미치지 않는"},{"chapter":"34 단원","word":"in an attempt to do","meaning":"~하려는 시도로, ~하려고 시도하면서"},{"chapter":"34 단원","word":"at odds with","meaning":"~와 불화하여[마찰을 빚어]; ~과 상충하여"},{"chapter":"34 단원","word":"straighten out","meaning":"(문제·상황 등을) 바로잡다[해결하다]"},{"chapter":"35 단원","word":"precise","meaning":"정확한, 정밀한; (사람이) 꼼꼼한, 엄격한"},{"chapter":"35 단원","word":"agricultural","meaning":"농업[농경]의; 농학의"},{"chapter":"35 단원","word":"differentiate","meaning":"구별[차별]하다"},{"chapter":"35 단원","word":"discriminate","meaning":"구별[판별]하다; 차별하다"},{"chapter":"35 단원","word":"craftsman","meaning":"장인(匠人), 공예가"},{"chapter":"35 단원","word":"migrate","meaning":"이주[이동]하다"},{"chapter":"35 단원","word":"regional","meaning":"지역[지방]의"},{"chapter":"35 단원","word":"supervisor","meaning":"관리자, 감시자"},{"chapter":"35 단원","word":"dwell","meaning":"살다[거주하다]"},{"chapter":"35 단원","word":"prosper","meaning":"번영[번창]하다; 성공하다"},{"chapter":"35 단원","word":"thrive","meaning":"번성하다, 번창하다; (동식물이) 잘 자라다"},{"chapter":"35 단원","word":"assure","meaning":"보장[보증]하다; 확신시키다, 안심시키다"},{"chapter":"35 단원","word":"incorporation","meaning":"합체[합동], 결합; 법인 조직, 회사"},{"chapter":"35 단원","word":"enforcement","meaning":"(법률의) 시행[집행]; 강요[강제]"},{"chapter":"35 단원","word":"spiral","meaning":"나선, 소용돌이; 나선형의; 나선형으로 움직이다"},{"chapter":"35 단원","word":"collision","meaning":"충돌, 부딪침; (이해·의견의) 대립, 상충"},{"chapter":"35 단원","word":"neutralize","meaning":"무효화하다, 상쇄시키다; 중립화하다; (화학 물질을) 중화하다"},{"chapter":"35 단원","word":"perish","meaning":"죽다; 썩어 없어지다, 소멸하다"},{"chapter":"35 단원","word":"parish","meaning":"(교회·성당의) 교구"},{"chapter":"35 단원","word":"grand","meaning":"웅장한, 장려한; 성대한; (사람이) 위엄 있는, 당당한; 원대한, 숭고한"},{"chapter":"35 단원","word":"grant","meaning":"주다, 수여하다; 승인하다; 수여; 보조금; 허가, 인가"},{"chapter":"35 단원","word":"sting","meaning":"쏘다, 찌르다; 따끔하게 하다; 고민하게 하다, 괴롭히다; 쏘기, 찌르기; 찌르는 듯한 아픔"},{"chapter":"35 단원","word":"stink","meaning":"악취를 풍기다; 악취, 고약한 냄새"},{"chapter":"35 단원","word":"commission","meaning":"(공적인 조사 등을 하는) 위원회; 위임(장); 위임 (사항); 수수료; 위임하다, 권한을 주다; 의뢰하다, 주문하다"},{"chapter":"35 단원","word":"take turns","meaning":"교대로[번갈아] 하다"},{"chapter":"35 단원","word":"shy away from","meaning":"~을 피하다"},{"chapter":"35 단원","word":"blend in with","meaning":"~과 섞이다, ~과 조화를 이루다"},{"chapter":"35 단원","word":"in common","meaning":"공동[공통]으로"},{"chapter":"35 단원","word":"at one’s disposal","meaning":"~의 마음대로 이용[사용]할 수 있게"},{"chapter":"35 단원","word":"sum up","meaning":"~을 요약하다"},{"chapter":"36 단원","word":"predator","meaning":"포식자; 육식 동물; 약탈자"},{"chapter":"36 단원","word":"authority","meaning":"권위[권력], 권한; (pl.)당국"},{"chapter":"36 단원","word":"prioritize","meaning":"우선시하다; 우선순위를 정하다"},{"chapter":"36 단원","word":"refreshment","meaning":"원기 회복, 상쾌하게 함; 가벼운 식사, 다과"},{"chapter":"36 단원","word":"exclusive","meaning":"배타적인; 독점적인, 전용의; 독점권; 독점 기사"},{"chapter":"36 단원","word":"polar","meaning":"북극[남극]의, 극지의; 정반대의"},{"chapter":"36 단원","word":"surgery","meaning":"외과, (외과) 수술"},{"chapter":"36 단원","word":"restoration","meaning":"복원[복구]; 반환; (제도 등의) 부활; 회복"},{"chapter":"36 단원","word":"asymmetry","meaning":"비대칭, 부조화, 불균형"},{"chapter":"36 단원","word":"equilibrium","meaning":"평형, 균형; (마음의) 평정(pl. equilibria)"},{"chapter":"36 단원","word":"infectious","meaning":"전염성[전염병]의"},{"chapter":"36 단원","word":"spit","meaning":"(침을) 뱉다; 침; 침을 뱉기"},{"chapter":"36 단원","word":"compatible","meaning":"양립할 수 있는, 모순 없는; 호환이 되는"},{"chapter":"36 단원","word":"glance","meaning":"흘긋 봄; 흘긋 보다, 훑어보다"},{"chapter":"36 단원","word":"glimpse","meaning":"흘긋 봄; 얼핏[흘긋] 보다"},{"chapter":"36 단원","word":"dispel","meaning":"(걱정 등을) 떨쳐 버리다[없애다]"},{"chapter":"36 단원","word":"chronic","meaning":"만성적인; 만성 질환을 앓고 있는"},{"chapter":"36 단원","word":"chronicle","meaning":"연대기; 연대순으로 기록하다"},{"chapter":"36 단원","word":"disguise","meaning":"숨기다, 속이다; 변장[가장]하다; 변장[가장] (도구)"},{"chapter":"36 단원","word":"inhibit","meaning":"억제[저해]하다; 금하다"},{"chapter":"36 단원","word":"inhabit","meaning":"살다, 거주하다; 서식하다"},{"chapter":"36 단원","word":"potent","meaning":"강한, 강력한; 설득력 있는"},{"chapter":"36 단원","word":"potential","meaning":"잠재적인, 가능성이 있는; 잠재력, 가능성"},{"chapter":"36 단원","word":"lean","meaning":"기대다, 의지하다; (몸을) 기울이다, 숙이다; 마른, 야윈; 기름기가 적은"},{"chapter":"36 단원","word":"turn to","meaning":"~에 의지하다; ~로 변화하다"},{"chapter":"36 단원","word":"sooner or later","meaning":"조만간"},{"chapter":"36 단원","word":"in comparison with","meaning":"~에 비해서, ~과 비교해 볼 때"},{"chapter":"36 단원","word":"sign up for","meaning":"~에 등록[가입]하다, ~을 신청하다"},{"chapter":"36 단원","word":"take charge of","meaning":"~의 책임을 지다; ~을 떠맡다[돌보다]"},{"chapter":"36 단원","word":"answer for","meaning":"~에 대해 책임지다; ~을 보증하다"},{"chapter":"37 단원","word":"sincere","meaning":"진실된, 진심에서 우러난"},{"chapter":"37 단원","word":"contemporary","meaning":"동시대의; 현대의, 당대의; 동시대 사람, 동년배"},{"chapter":"37 단원","word":"ignorance","meaning":"무지, 무식"},{"chapter":"37 단원","word":"loyalty","meaning":"충실, 충성(심); 성실"},{"chapter":"37 단원","word":"exotic","meaning":"외국산의, 외래의; 이국적인; 외래종; 외래어"},{"chapter":"37 단원","word":"postpone","meaning":"미루다[연기하다]"},{"chapter":"37 단원","word":"tactic","meaning":"전술; 전략[작전]"},{"chapter":"37 단원","word":"reconcile","meaning":"화해시키다; 조화시키다; 조정[중재]하다"},{"chapter":"37 단원","word":"enact","meaning":"(법률을) 제정하다; 상연하다; ~의 역을 연기하다"},{"chapter":"37 단원","word":"restrain","meaning":"저지[제지]하다; (감정 등을) 억누르다, 억제하다"},{"chapter":"37 단원","word":"attainable","meaning":"달성할[이룰] 수 있는; 도달할 수 있는"},{"chapter":"37 단원","word":"initiative","meaning":"새로운 계획; 시작, 개시; 주도권; 처음의, 발단의"},{"chapter":"37 단원","word":"splendid","meaning":"화려한, 웅장한; 멋있는"},{"chapter":"37 단원","word":"complementary","meaning":"보충하는; 서로 보완하는"},{"chapter":"37 단원","word":"supplemental","meaning":"보충의, 추가의; 추가된 것"},{"chapter":"37 단원","word":"patron","meaning":"후원자, 보호자, 은인; 단골손님, 고객"},{"chapter":"37 단원","word":"outlook","meaning":"(미래의) 전망, 예측; 관점, 견해; 경치"},{"chapter":"37 단원","word":"ban","meaning":"금하다, 금지하다; 금지(령)"},{"chapter":"37 단원","word":"barn","meaning":"헛간"},{"chapter":"37 단원","word":"cluster","meaning":"떼, 무리; (포도 등의) 송이; 무리를 이루다, 모이다"},{"chapter":"37 단원","word":"clutter","meaning":"잡동사니, 어수선함; 소란; 흩뜨리다, 어지르다"},{"chapter":"37 단원","word":"align","meaning":"일직선으로 놓다[놓이다], 정렬하다; 같은 태도를 취하게 하다, 제휴시키다"},{"chapter":"37 단원","word":"assign","meaning":"할당하다, 배정하다; 임명[지정]하다"},{"chapter":"37 단원","word":"tense","meaning":"시제; (줄 등이) 팽팽한; 긴장한, 긴박한; 부자연스러운, 어색한; 팽팽하게 하다[되다]; 긴장하다[시키다]"},{"chapter":"37 단원","word":"venture into","meaning":"~으로 과감히 들어가다, 과감히 ~을 하다"},{"chapter":"37 단원","word":"bump into","meaning":"~와 우연히 마주치다"},{"chapter":"37 단원","word":"come upon","meaning":"~을 우연히 만나다[발견하다]"},{"chapter":"37 단원","word":"in exchange for","meaning":"~의 교환으로, ~의 대가로"},{"chapter":"37 단원","word":"turn down","meaning":"~을 거절하다; ~을 약하게 하다; (소리 등을) 낮추다"},{"chapter":"37 단원","word":"by accident","meaning":"우연히"},{"chapter":"38 단원","word":"adaptation","meaning":"적응[순응], 적합; 각색, 개조"},{"chapter":"38 단원","word":"commute","meaning":"통근; 통근하다; 교환하다, 대체하다"},{"chapter":"38 단원","word":"innate","meaning":"타고난, 선천적인; 본질적인"},{"chapter":"38 단원","word":"parliament","meaning":"의회, 국회"},{"chapter":"38 단원","word":"exploit","meaning":"(부당하게) 이용하다; 착취하다; (자원을) 개발하다, 활용하다"},{"chapter":"38 단원","word":"render","meaning":"(어떤 상태가 되게) 만들다[하다]; (원조 등을) 주다, 제공하다; 표현하다, 묘사하다"},{"chapter":"38 단원","word":"proliferation","meaning":"급증, 확산; 증식"},{"chapter":"38 단원","word":"ripen","meaning":"익(히)다, 성숙하다[시키다]"},{"chapter":"38 단원","word":"utilize","meaning":"활용[이용]하다"},{"chapter":"38 단원","word":"restructure","meaning":"재구성하다, 개조[개혁]하다"},{"chapter":"38 단원","word":"reorganize","meaning":"재조직하다[되다], 개편하다"},{"chapter":"38 단원","word":"attribution","meaning":"돌림, 귀속(歸屬); 특성, 속성"},{"chapter":"38 단원","word":"strap","meaning":"가죽 끈, 혁대; 끈으로 묶다; 반창고를 붙이다"},{"chapter":"38 단원","word":"constrict","meaning":"압축하다, 죄다; 억제[제한]하다"},{"chapter":"38 단원","word":"compress","meaning":"압축[압착]하다; 간결하게 하다; 요약하다"},{"chapter":"38 단원","word":"pension","meaning":"연금, 생활 보조금"},{"chapter":"38 단원","word":"defy","meaning":"도전하다, 맞서다, 반항하다; 무시하다, 문제 삼지 않다"},{"chapter":"38 단원","word":"diploma","meaning":"졸업장, 수료증; 자격증"},{"chapter":"38 단원","word":"diplomatic","meaning":"외교(상)의; 외교에 능한"},{"chapter":"38 단원","word":"subtraction","meaning":"빼기, 공제; 뺄셈"},{"chapter":"38 단원","word":"substitution","meaning":"대리, 대용; 대체; 대리인, 대용품"},{"chapter":"38 단원","word":"immoral","meaning":"부도덕한, 비도덕적인"},{"chapter":"38 단원","word":"immortal","meaning":"불사의, 불멸의; 불사의 인물"},{"chapter":"38 단원","word":"utter","meaning":"입 밖에 내다, 말하다; 발음하다; 공표하다, 유포하다; 전적인, 완전한; 무조건의, 단호한, 절대적인"},{"chapter":"38 단원","word":"be subject to","meaning":"~의 영향을 받다; ~의 지배를 받다; ~에 걸리기 쉽다"},{"chapter":"38 단원","word":"step in","meaning":"개입하다, 돕고 나서다"},{"chapter":"38 단원","word":"burst out","meaning":"갑자기 ~하다; ~을 터뜨리다"},{"chapter":"38 단원","word":"in line with","meaning":"~에 따라, ~에 일치[부합]하여"},{"chapter":"38 단원","word":"be obsessed with","meaning":"~에 사로잡히다, ~에 집착하다"},{"chapter":"38 단원","word":"get by","meaning":"그럭저럭 살아 나가다, 그럭저럭 해내다"},{"chapter":"39 단원","word":"emerge","meaning":"나오다, 나타나다; 드러나다, 밝혀지다"},{"chapter":"39 단원","word":"extensive","meaning":"넓은, 광대한; 광범위에 걸친, 포괄적인"},{"chapter":"39 단원","word":"comprehensive","meaning":"포괄적인, 종합적인; 이해력이 있는"},{"chapter":"39 단원","word":"marine","meaning":"바다[해양]의; 선박의; 해군의"},{"chapter":"39 단원","word":"pesticide","meaning":"살충제, 농약"},{"chapter":"39 단원","word":"launch","meaning":"개시[착수]하다; 출시하다; 발사하다; 개시; 출시; 발사"},{"chapter":"39 단원","word":"salient","meaning":"현저한, 두드러진; 핵심적인; 돌출한"},{"chapter":"39 단원","word":"unprecedented","meaning":"전례 없는; 새로운, 신기한"},{"chapter":"39 단원","word":"extraordinary","meaning":"비상[비범]한, 보통이 아닌; 별난, 놀라운"},{"chapter":"39 단원","word":"shovel","meaning":"삽; 삽으로 파다"},{"chapter":"39 단원","word":"renowned","meaning":"저명한, 유명한"},{"chapter":"39 단원","word":"profession","meaning":"직업, 전문직"},{"chapter":"39 단원","word":"rotation","meaning":"회전; (지구의) 자전; 순환; 교대"},{"chapter":"39 단원","word":"backfire","meaning":"역효과를 낳다"},{"chapter":"39 단원","word":"intermediate","meaning":"중간의; 중급의; 중간에 있는 것; 중개인"},{"chapter":"39 단원","word":"stun","meaning":"기절시키다; 깜짝 놀라게 하다"},{"chapter":"39 단원","word":"persistence","meaning":"고집, 끈기; 지속; 영속"},{"chapter":"39 단원","word":"miser","meaning":"구두쇠, 자린고비"},{"chapter":"39 단원","word":"misery","meaning":"비참함, 궁핍; 불행, 고뇌"},{"chapter":"39 단원","word":"condense","meaning":"응축하다[시키다], 압축[농축]하다; (사상·표현 등을) 요약하다, 간추리다"},{"chapter":"39 단원","word":"condemn","meaning":"비난[힐난]하다; 선고하다; 운명짓다"},{"chapter":"39 단원","word":"textile","meaning":"직물, 섬유; 직물의"},{"chapter":"39 단원","word":"textual","meaning":"원문[본문]의; 원문대로의, 문자대로의"},{"chapter":"39 단원","word":"bound","meaning":"경계, 한계; 경계를 긋다, 제한하다; (껑충껑충) 뛰다; 튀어 오르다; ~해야 하는; ~할 가능성이 큰; ~행의, ~에 가려고 하는"},{"chapter":"39 단원","word":"amount to","meaning":"(합계가) ~에 이르다[달하다]; ~과 마찬가지다"},{"chapter":"39 단원","word":"strive for","meaning":"~을 위해 노력하다[힘쓰다]"},{"chapter":"39 단원","word":"in respect of","meaning":"~에 관해서는"},{"chapter":"39 단원","word":"with regard to","meaning":"~과 관련하여, ~에 관해서는"},{"chapter":"39 단원","word":"blow up","meaning":"폭파하다, 터뜨리다; 화를 내다"},{"chapter":"39 단원","word":"ward off","meaning":"~을 물리치다, ~을 피하다"},{"chapter":"40 단원","word":"ethical","meaning":"윤리적인, 도덕(상)의"},{"chapter":"40 단원","word":"frequency","meaning":"빈도; 빈발, 잦음; 주파수; 진동수"},{"chapter":"40 단원","word":"overjoyed","meaning":"매우 기뻐하는"},{"chapter":"40 단원","word":"stereotype","meaning":"고정 관념, 정형화된 생각; 정형화하다"},{"chapter":"40 단원","word":"voluntary","meaning":"자발적인, 임의의; 고의의, 계획적인"},{"chapter":"40 단원","word":"soak","meaning":"(물에) 담그다, 흠뻑 적시다"},{"chapter":"40 단원","word":"drain","meaning":"배수하다, (물이) 빠지다; 소모시키다, 고갈시키다; 배수관, 방수로"},{"chapter":"40 단원","word":"replacement","meaning":"대체, 교체; 대체자[물]; 반환, 복직"},{"chapter":"40 단원","word":"estate","meaning":"토지; 사유지; 재산권, 부동산권"},{"chapter":"40 단원","word":"scarcity","meaning":"부족, 결핍; 드묾, 희귀"},{"chapter":"40 단원","word":"surplus","meaning":"나머지[잔여]; 과잉, 잉여물; 나머지[잔여]의; 과잉의, 잉여의"},{"chapter":"40 단원","word":"biosphere","meaning":"생물권"},{"chapter":"40 단원","word":"entangle","meaning":"얽히게 하다; (덫 등에) 말려들게 하다"},{"chapter":"40 단원","word":"intertwine","meaning":"뒤얽(히)다, 엮(이)다; 엉클어지다"},{"chapter":"40 단원","word":"subsidy","meaning":"보조금, 장려금"},{"chapter":"40 단원","word":"damp","meaning":"습기 찬, 축축한; 습기, 물기; 축축하게 하다"},{"chapter":"40 단원","word":"pillar","meaning":"기둥, 지주; 대들보; 기념비[탑]"},{"chapter":"40 단원","word":"segment","meaning":"단편, 조각, 부분; 나누다, 분할하다"},{"chapter":"40 단원","word":"sediment","meaning":"침전물, 퇴적물"},{"chapter":"40 단원","word":"competent","meaning":"유능한, (~할) 역량이 있는; 요구에 맞는, 충분한"},{"chapter":"40 단원","word":"competitive","meaning":"경쟁의; 경쟁력이 있는"},{"chapter":"40 단원","word":"sew","meaning":"꿰매다, 바느질하다"},{"chapter":"40 단원","word":"sow","meaning":"(씨를) 뿌리다, 심다"},{"chapter":"40 단원","word":"toll","meaning":"통행료, 사용세; 희생, 대가; 사상자 수; 종소리; 징수하다, 부과하다; (종 등이) 울리다, 치다"},{"chapter":"40 단원","word":"anything but","meaning":"결코[전혀] ~이 아닌"},{"chapter":"40 단원","word":"struggle with","meaning":"~로 고생하다, ~을 해결하려고 애쓰다"},{"chapter":"40 단원","word":"by nature","meaning":"선천적으로, 본래"},{"chapter":"40 단원","word":"in the face of","meaning":"~에 직면하여; ~에도 불구하고"},{"chapter":"40 단원","word":"bring ~ to life","meaning":"~에 생명[활기]을 불어넣다, ~을 회생시키다; (이야기 등을) 재미있게 하다"},{"chapter":"40 단원","word":"yield to","meaning":"~에게 양보하다; ~에 굴복하다"}]; 
+    const EMBEDDED_BOOK_NAME = "워드마스터 고등 Complete";
+    const IS_STUDENT_VERSION = true; 
+
+    // 인증용 구글 시트 URL (JSONP 우회 적용)
+    const AUTH_SHEET_ID = "17ARTCYwJFKBGhZmtsHnyGxLce4Jl5wd9dRmvZFMTJhs";
+
+    // 원장님 구글 폼 ID
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfqF1UuZXmZNsKr6i4y2LBxF8wIbychWIEDk7iXbb0JRezraA/formResponse";
+    const ENTRY_IDS = {
+        seat: "entry.569066082",      
+        name: "entry.497746211",       
+        chapter: "entry.1458418989",    
+        time1: "entry.208605908",      
+        time2: "entry.365892993",     
+        time3: "entry.615892699",     
+        time4: "entry.1840434640",     
+        wrongWords: "entry.1716399298"  
+    };
+
+    let submitted = false;
+    document.getElementById('hidden_iframe').onload = function() {
+        if (submitted) { alert('학습 결과가 원장님께 전송되었습니다.'); submitted = false; }
+    };
+
+    let originalWordData = EMBEDDED_DATA.length > 0 ? EMBEDDED_DATA : [{chapter:"기본단원", word:"upload_required", meaning:"자료를 업로드해주세요"}];
+    let textbookName = EMBEDDED_BOOK_NAME;
+
+    /* --- 상태 변수 --- */
+    let activeWordData = [], pendingQueue = [], boxes = { left: [], mid: [], right: [] };
+    let mode = 0, isEnToKo = true, currentWord = null, isFlipped = false, currentCycle = 1;
+    let currentSessionId = null, globalStopwatch, timer3Sec;
+    let sessionData = { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+    let isAnimating = false; 
+    let isLoggedIn = false; // 로그인 상태 관리 변수
+
+    /* --- 초기화 블록 --- */
+    window.onload = function() {
+        if (IS_STUDENT_VERSION) {
+            document.getElementById('btnUpload').style.display = 'none';
+        }
+        if (localStorage.getItem('edenSeat')) {
+            document.getElementById('seatInput').value = localStorage.getItem('edenSeat');
+        }
+        if (localStorage.getItem('edenName')) {
+            document.getElementById('nameInput').value = localStorage.getItem('edenName');
+        }
+
+        showStartModal();
+        
+        document.body.addEventListener('touchstart', unlockAudio, {once:true});
+        document.body.addEventListener('click', unlockAudio, {once:true});
+    };
+
+    /* --- 구글 시트 학생 인증 로직 (CORS 우회 JSONP) --- */
+    function fetchAuthData() {
+        return new Promise((resolve, reject) => {
+            const scriptId = 'google-sheet-jsonp';
+            let oldScript = document.getElementById(scriptId);
+            if (oldScript) oldScript.remove();
+
+            window.handleAuthResponse = function(response) {
+                resolve(response);
+                delete window.handleAuthResponse;
+            };
+
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = `https://docs.google.com/spreadsheets/d/${AUTH_SHEET_ID}/gviz/tq?tqx=responseHandler:handleAuthResponse`;
+            script.onerror = () => reject(new Error("Script loading failed"));
+            document.body.appendChild(script);
+            
+            setTimeout(() => reject(new Error("Timeout")), 10000);
+        });
+    }
+
+    /* 분리된 로그인 로직 */
+    async function performLogin() {
+        const name = document.getElementById('nameInput').value.trim();
+        const pw = document.getElementById('pwInput').value.trim();
+
+        if (!name || !pw) {
+            alert("이름과 비밀번호를 모두 입력해 주세요.");
+            return;
+        }
+
+        const loginBtn = document.getElementById('loginBtn');
+        const originalHtml = loginBtn.innerHTML;
+        loginBtn.innerHTML = "인증을 확인하는 중입니다...";
+        loginBtn.style.pointerEvents = "none";
+        loginBtn.style.opacity = "0.7";
+
+        try {
+            const response = await fetchAuthData();
+            let isAuthorized = false;
+
+            if (response && response.status === 'ok') {
+                const rows = response.table.rows;
+                for (let i = 0; i < rows.length; i++) {
+                    if (!rows[i] || !rows[i].c) continue;
+                    
+                    const cellName = rows[i].c[0]; 
+                    const cellPw = rows[i].c[1];   
+                    
+                    const rName = cellName && cellName.v != null ? String(cellName.v).trim() : "";
+                    const rPw = cellPw && cellPw.v != null ? String(cellPw.v).trim() : "";
+
+                    if (rName === name && rPw === pw) {
+                        isAuthorized = true;
+                        break;
+                    }
+                }
+            } else {
+                throw new Error("Invalid response format");
+            }
+
+            if (isAuthorized) {
+                isLoggedIn = true;
+                const seat = document.getElementById('seatInput').value.trim();
+                localStorage.setItem('edenSeat', seat);
+                localStorage.setItem('edenName', name);
+
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('menuSection').classList.remove('hidden');
+            } else {
+                alert("인증 실패! 이름이나 비밀번호가 일치하지 않습니다.");
+            }
+        } catch (error) {
+            console.error("Auth Error:", error);
+            alert("인증 서버 연결 오류!\n네트워크 상태를 확인하시거나 구글 시트 공유 설정('링크가 있는 모든 사용자')을 확인해주세요.");
+        } finally {
+            loginBtn.innerHTML = originalHtml;
+            loginBtn.style.pointerEvents = "auto";
+            loginBtn.style.opacity = "1";
+        }
+    }
+
+    /* --- 마스터 배포 파일 생성 --- */
+    function generateStudentFile() {
+        const bookName = document.getElementById('adminBookName').value.trim();
+        if(!bookName) { alert("교재 제목을 먼저 입력해주세요."); return; }
+        
+        let currentHtml = document.documentElement.outerHTML;
+        const dataJson = JSON.stringify(originalWordData);
+        
+        currentHtml = currentHtml.replace(/const EMBEDDED_DATA = \[\];/, `const EMBEDDED_DATA = ${dataJson};`);
+        currentHtml = currentHtml.replace(/const EMBEDDED_BOOK_NAME = "";/, `const EMBEDDED_BOOK_NAME = "${bookName}";`);
+        currentHtml = currentHtml.replace(/const IS_STUDENT_VERSION = false;/, `const IS_STUDENT_VERSION = true;`);
+
+        const blob = new Blob([currentHtml], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `이든학습_${bookName}.html`;
+        link.click();
+        alert("학생용 배포 파일이 생성되었습니다!");
+    }
+
+    /* --- 모바일 음성 먹통 방지 (Audio Unlock) 및 영어 발음 TTS 복구 --- */
+    let isAudioUnlocked = false; 
+
+    function unlockAudio() {
+        if (isAudioUnlocked || !window.speechSynthesis) return;
+        const u = new SpeechSynthesisUtterance(' '); 
+        u.volume = 0; 
+        u.rate = 10; 
+        window.speechSynthesis.speak(u);
+        isAudioUnlocked = true;
+    }
+
+    function speak(text) { 
+        try {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel(); 
+            const u = new SpeechSynthesisUtterance(text); 
+            u.lang = 'en-US'; 
+            u.rate = 0.9; 
+            window.speechSynthesis.speak(u); 
+        } catch(e) { console.warn("TTS Error:", e); }
+    }
+
+    /* --- 구글폼 전송 로직 --- */
+    function sendDataToGoogleForm() {
+        unlockAudio(); 
+        const seat = document.getElementById('seatInput').value.trim() || localStorage.getItem('edenSeat');
+        const name = document.getElementById('nameInput').value.trim() || localStorage.getItem('edenName');
+        
+        if (!seat || !name) { alert("학생 좌석번호와 이름 정보가 없습니다."); return; }
+
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let targetIdx = h.findIndex(x => x.submitted === false);
+        
+        let dataToSend = sessionData;
+        let chapterToSend = document.getElementById('chapterSelect').value;
+
+        if (targetIdx > -1) {
+            chapterToSend = h[targetIdx].chapter;
+            dataToSend = h[targetIdx].data;
+            h[targetIdx].submitted = true;
+            localStorage.setItem('leitnerHistory', JSON.stringify(h));
+        } else {
+            if (!currentSessionId) {
+                alert("전송할 새로운 학습 기록이 없습니다.");
+                return;
+            }
+            let currIdx = h.findIndex(x => x.id === currentSessionId);
+            if (currIdx > -1) {
+                h[currIdx].submitted = true;
+                localStorage.setItem('leitnerHistory', JSON.stringify(h));
+                dataToSend = h[currIdx].data;
+                chapterToSend = h[currIdx].chapter;
+            }
+        }
+
+        const form = document.createElement("form");
+        form.action = GOOGLE_FORM_URL; form.method = "POST"; form.target = "hidden_iframe";
+        
+        const add = (n,v) => { const i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; form.appendChild(i); };
+        
+        add(ENTRY_IDS.seat, seat); add(ENTRY_IDS.name, name); add(ENTRY_IDS.chapter, chapterToSend);
+        add(ENTRY_IDS.time1, formatTimeKor(dataToSend.time1)); add(ENTRY_IDS.time2, formatTimeKor(dataToSend.time2));
+        add(ENTRY_IDS.time3, formatTimeKor(dataToSend.time3)); add(ENTRY_IDS.time4, formatTimeKor(dataToSend.time4));
+        
+        const wrongStr = dataToSend.wrongWords.map(w => `${w.word}|${w.meaning||""}`).join('\n') || "없음";
+        add(ENTRY_IDS.wrongWords, wrongStr);
+        
+        document.body.appendChild(form); submitted = true; form.submit();
+        alert(`[${chapterToSend}] 단원의 학습 결과가 원장님께 정상적으로 전송 중입니다.`);
+        
+        currentSessionId = null;
+        sessionData = { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+
+        setTimeout(() => { if (document.body.contains(form)) document.body.removeChild(form); }, 1000);
+    }
+
+    function formatTimeKor(s) { if(!s||s===0) return "0초"; let m=Math.floor(s/60); return m>0 ? `${m}분 ${s%60}초` : `${s%60}초`; }
+
+    function startRealtimeStopwatch() {
+        clearInterval(globalStopwatch);
+        document.getElementById('stopwatchDisplay').style.display = 'block';
+        globalStopwatch = setInterval(() => {
+            if (mode === 1) sessionData.time1++; else if (mode === 2) sessionData.time2++; else if (mode === 3) sessionData.time3++; else if (mode === 4) sessionData.time4++;
+            let s = [0, sessionData.time1, sessionData.time2, sessionData.time3, sessionData.time4][mode];
+            document.getElementById('stopwatchDisplay').innerText = `⏱ ${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+            updateSessionToStorage();
+        }, 1000);
+    }
+
+    function updateSessionToStorage() {
+        if (!currentSessionId) return;
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let i = h.findIndex(x => x.id === currentSessionId);
+        if (i > -1) { h[i].data = sessionData; localStorage.setItem('leitnerHistory', JSON.stringify(h)); }
+        if (sessionData.wrongWords.length > 0) localStorage.setItem('leitnerWrongWords', JSON.stringify(sessionData.wrongWords));
+    }
+
+    /* 🔥 다른 단원으로 변경 시 미전송 검사 로직 보강 */
+    function handleChapterChange(e) {
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let unsubmitted = h.find(x => x.submitted === false);
+        const chs = [...new Set(originalWordData.map(x=>x.chapter))];
+
+        if (unsubmitted && unsubmitted.chapter !== e.target.value) {
+            if (chs.includes(unsubmitted.chapter)) {
+                alert(`[${unsubmitted.chapter}] 단원의 학습 결과가 아직 전송되지 않았습니다.\n다른 단원을 학습하려면 먼저 [주황색: 학습 결과 원장님께 전송하기] 버튼을 눌러주세요.`);
+                e.target.value = unsubmitted.chapter; 
+                return;
+            } else {
+                unsubmitted.submitted = true;
+                localStorage.setItem('leitnerHistory', JSON.stringify(h));
+            }
+        }
+        
+        currentSessionId = null; 
+        showStartModal(); 
+    }
+
+    /* --- 앱 초기화 및 시작 --- */
+    function initApp(m, isNew = false) {
+        unlockAudio(); 
+        
+        const selectedCh = document.getElementById('chapterSelect').value;
+        const chs = [...new Set(originalWordData.map(x=>x.chapter))];
+
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let unsubmitted = h.find(x => x.submitted === false);
+        
+        // 강제 전송 검사 강화
+        if (unsubmitted && unsubmitted.chapter !== selectedCh) {
+            if (chs.includes(unsubmitted.chapter)) {
+                alert(`[${unsubmitted.chapter}] 단원의 학습이 완료되지 않았거나 전송되지 않았습니다.\n이전 단원의 [주황색: 학습 결과 원장님께 전송하기] 버튼을 꼭 눌러주세요.`);
+                document.getElementById('chapterSelect').value = unsubmitted.chapter;
+                return;
+            } else {
+                unsubmitted.submitted = true;
+                localStorage.setItem('leitnerHistory', JSON.stringify(h));
+            }
+        }
+
+        mode = m;
+        isEnToKo = document.querySelector('input[name="modalLang"]:checked').value === 'en2ko';
+        document.querySelector(`input[name="topLang"][value="${isEnToKo?'en2ko':'ko2en'}"]`).checked = true;
+
+        // 세션 데이터 복구 및 생성 로직 안정화
+        if (!currentSessionId) {
+            if (unsubmitted && unsubmitted.chapter === selectedCh) {
+                currentSessionId = unsubmitted.id;
+                sessionData = unsubmitted.data || { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+            } else {
+                currentSessionId = Date.now();
+                sessionData = { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+                
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')} ${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
+                
+                h.push({ 
+                    id: currentSessionId, 
+                    chapter: selectedCh, 
+                    date: dateStr, 
+                    data: sessionData, 
+                    valid: true,
+                    submitted: false 
+                });
+                localStorage.setItem('leitnerHistory', JSON.stringify(h));
+            }
+        }
+
+        activeWordData = originalWordData.filter(item => item.chapter === selectedCh);
+        if (activeWordData.length === 0) activeWordData = [...originalWordData];
+
+        pendingQueue = [...activeWordData]; 
+        boxes = { left: [], mid: [], right: [] }; 
+        if(mode === 2) currentCycle = 1;
+        
+        document.getElementById('modalOverlay').style.display = 'none';
+        
+        const titleEl = document.getElementById('modeTitle');
+        const dashEl = document.getElementById('mainDash');
+        const timerEl = document.getElementById('timerContainer');
+        const badgeEl = document.getElementById('cycleBadge');
+        const progressEl = document.getElementById('progressText');
+
+        if(mode === 1) {
+            titleEl.innerText = "1차 학습: 단어 익히기";
+            dashEl.classList.add('hidden');
+            timerEl.style.display = 'none';
+            badgeEl.style.display = 'none';
+            document.getElementById('mainArea').className = 'main-area';
+            progressEl.className = 'progress-badge badge-default';
+        } else if(mode === 2) {
+            titleEl.innerText = "2차 학습: 분류 훈련";
+            dashEl.classList.remove('hidden');
+            timerEl.style.display = 'none';
+            badgeEl.style.display = 'block';
+            badgeEl.innerText = `${currentCycle}회독`;
+            badgeEl.className = `progress-badge badge-cycle-${currentCycle}`;
+            progressEl.className = `progress-badge badge-cycle-${currentCycle}`;
+            document.getElementById('mainArea').className = `main-area cycle-${currentCycle}`;
+        } else if(mode === 3) {
+            titleEl.innerText = "3차 학습: 실전 테스트!";
+            dashEl.classList.remove('hidden');
+            timerEl.style.display = 'block';
+            badgeEl.style.display = 'block';
+            badgeEl.innerText = '최종 테스트';
+            badgeEl.className = 'progress-badge badge-cycle-3';
+            progressEl.className = 'progress-badge badge-cycle-3';
+            document.getElementById('mainArea').className = 'main-area cycle-3';
+        }
+
+        startRealtimeStopwatch(); 
+        nextCard();
+    }
+
+    function startMode4() {
+        const selectedCh = document.getElementById('chapterSelect').value;
+        const chs = [...new Set(originalWordData.map(x=>x.chapter))];
+
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let unsubmitted = h.find(x => x.submitted === false);
+        
+        if (unsubmitted && unsubmitted.chapter !== selectedCh) {
+            if (chs.includes(unsubmitted.chapter)) {
+                alert(`[${unsubmitted.chapter}] 단원의 학습 결과가 아직 전송되지 않았습니다.\n이전 단원의 [주황색: 학습 결과 원장님께 전송하기] 버튼을 꼭 눌러주세요.`);
+                document.getElementById('chapterSelect').value = unsubmitted.chapter;
+                return;
+            } else {
+                unsubmitted.submitted = true;
+                localStorage.setItem('leitnerHistory', JSON.stringify(h));
+            }
+        }
+
+        let savedWrongs = JSON.parse(localStorage.getItem('leitnerWrongWords') || '[]');
+        if (savedWrongs.length === 0) { alert("저장된 오답이 없습니다. 3차 실전 테스트를 먼저 진행하세요!"); return; }
+        
+        if (!currentSessionId) {
+            if (unsubmitted && unsubmitted.chapter === selectedCh) {
+                currentSessionId = unsubmitted.id;
+                sessionData = unsubmitted.data || { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+            } else {
+                currentSessionId = Date.now();
+                sessionData = { time1: 0, time2: 0, time3: 0, time4: 0, p3Stats: { right: 0, mid: 0, left: 0 }, wrongWords: [] };
+            }
+        }
+
+        mode = 4; activeWordData = [...savedWrongs]; 
+        pendingQueue = [...activeWordData]; 
+        boxes = { left: [], mid: [], right: [] }; 
+        
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.getElementById('modeTitle').innerText = "4차 학습: 오답 완벽 체화";
+        document.getElementById('mainDash').classList.remove('hidden');
+        document.getElementById('timerContainer').style.display = 'none';
+        
+        const badgeEl = document.getElementById('cycleBadge');
+        badgeEl.style.display = 'block';
+        badgeEl.innerText = '오답 복습';
+        badgeEl.className = 'progress-badge badge-cycle-4';
+        document.getElementById('progressText').className = 'progress-badge badge-cycle-4';
+        document.getElementById('mainArea').className = 'main-area cycle-4';
+
+        startRealtimeStopwatch(); 
+        nextCard();
+    }
+
+    /* --- 핵심 카드 교체 로직 --- */
+    function nextCard() {
+        isFlipped = false;
+        const c = document.getElementById('wordCard'), w = document.getElementById('swipeWrapper');
+        c.style.transition = 'none'; c.classList.remove('is-flipped');
+        w.style.transition = 'none'; w.style.opacity = '1'; w.style.transform = 'translate(0,0) rotate(0)';
+        
+        document.getElementById('frontGuide').innerText = "터치하여 확인";
+        document.getElementById('backGuide').innerText = "밀어서 분류하세요";
+
+        setTimeout(() => { c.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'; w.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s'; }, 50);
+        clearInterval(timer3Sec);
+        
+        if (pendingQueue.length === 0) {
+            return showSummary();
+        }
+        currentWord = pendingQueue.shift();
+        
+        updateUI();
+        
+        if (isEnToKo) speak(currentWord.word);
+        
+        if (mode === 3) start3Timer();
+    }
+
+    /* 🔥 영어 3열 배치 및 반응형 PC UI 폰트 크기 계산 */
+    function updateUI() {
+        if (!currentWord) return;
+        const f = document.getElementById('frontText'), b = document.getElementById('backText');
+        
+        let baseMult = window.innerWidth > 768 ? 1.3 : 1.0;
+        const mult = parseFloat(document.getElementById('fontSizeLevel').value) * baseMult;
+
+        let wordText = currentWord.word || "";       
+        let meaningText = currentWord.meaning || ""; 
+
+        let meaningLines = meaningText.split(/\s*,\s*/);
+        let meaningFormatted = meaningLines.join('<br>');
+        let linesCount = meaningLines.length;
+
+        let sizeWord = 40 * mult;
+        let sizeMeaning = 38 * mult; 
+
+        let len = meaningText.length;
+        if (linesCount >= 4 || len > 40) {
+            sizeMeaning = 20 * mult;
+        } else if (linesCount === 3 || len > 20) {
+            sizeMeaning = 26 * mult;
+        } else if (linesCount === 2 || len > 10) {
+            sizeMeaning = 32 * mult;
+        }
+
+        let frontHTML = `<div style="font-size:${sizeWord}px; font-weight:900; color:#1a5f7a; line-height:1.2;">${wordText}</div>`;
+        let backHTML = `<div style="font-size:${sizeMeaning}px; font-weight:700; color:#333; word-break:keep-all; line-height:1.5;">${meaningFormatted}</div>`;
+
+        if (isEnToKo) {
+            f.innerHTML = frontHTML;
+            b.innerHTML = backHTML;
+            f.className = "word-text";
+            b.className = "word-text";
+        } else {
+            f.innerHTML = backHTML;
+            b.innerHTML = frontHTML;
+            f.className = "word-text";
+            b.className = "word-text";
+        }
+        
+        const totalCount = activeWordData.length;
+        if (mode === 1) {
+            document.getElementById('progressText').innerText = `진행: ${totalCount - pendingQueue.length} / ${totalCount}`;
+        } else {
+            document.getElementById('progressText').innerText = `완료: ${boxes.right.length} / ${totalCount}`;
+        }
+        
+        document.getElementById('cntLeft').innerText = boxes.left.length;
+        document.getElementById('cntMid').innerText = boxes.mid.length;
+        document.getElementById('cntRight').innerText = boxes.right.length;
+    }
+
+    /* --- 결산 및 라운드 재개 --- */
+    function showSummary() {
+        clearInterval(globalStopwatch); updateSessionToStorage();
+        document.getElementById('modalOverlay').style.display = 'flex';
+        const m = document.getElementById('resultModal'); m.classList.remove('hidden');
+        document.getElementById('startModal').classList.add('hidden');
+        document.getElementById('historyModal').classList.add('hidden');
+        
+        document.getElementById('resLeft').innerText = boxes.left.length;
+        document.getElementById('resMid').innerText = boxes.mid.length;
+        document.getElementById('resRight').innerText = boxes.right.length;
+        const btns = document.getElementById('resultActionBtns');
+
+        if (mode === 1) {
+            document.getElementById('resultTitle').innerText = "1차 학습 완료!";
+            document.getElementById('resultMsg').innerText = "단어를 모두 훑어보았습니다.";
+            btns.innerHTML = `<button class="btn-main btn-blue" onclick="initApp(1, false)">다시 연습하기</button><button class="btn-main btn-orange" onclick="initApp(2, false)">2차 학습 시작하기</button>`;
+        } else if (mode === 4) {
+            if (boxes.right.length === activeWordData.length) {
+                document.getElementById('resultTitle').innerText = "오답 정복 완료!"; document.getElementById('resultMsg').innerText = "틀렸던 단어를 모두 암기했습니다!";
+                btns.innerHTML = `<button class="btn-main btn-gray" onclick="showStartModal()">메뉴로 가기</button>`; localStorage.removeItem('leitnerWrongWords'); 
+            } else {
+                document.getElementById('resultTitle').innerText = "라운드 정리"; document.getElementById('resultMsg').innerText = "남은 오답 카드를 다시 훈련합니다.";
+                btns.innerHTML = `<button class="btn-main btn-blue" onclick="resumeRound()">다음 라운드 진행</button>`;
+            }
+        } else {
+            if (boxes.right.length === activeWordData.length) {
+                if (mode === 2 && currentCycle < 3) {
+                    document.getElementById('resultTitle').innerText = `${currentCycle}회독 완료!`; document.getElementById('resultMsg').innerText = `이어서 ${currentCycle + 1}회독을 진행합니다.`;
+                    btns.innerHTML = `<button class="btn-main btn-orange" onclick="startNextCycle()">다음 회독 시작</button>`;
+                } else if (mode === 2 && currentCycle === 3) {
+                    document.getElementById('resultTitle').innerText = "2차 학습 완료!"; document.getElementById('resultMsg').innerText = `모든 분류가 끝났습니다. 실전 테스트로 이동하세요.`;
+                    btns.innerHTML = `<button class="btn-main btn-green" onclick="initApp(3, false)">3차 테스트 시작</button>`;
+                } else {
+                    document.getElementById('resultTitle').innerText = "최종 테스트 통과!"; document.getElementById('resultMsg').innerHTML = `수고하셨습니다!<br>틀린 문제는 '4차 학습'에 저장되었습니다.`;
+                    btns.innerHTML = `<button class="btn-main btn-gray" onclick="showStartModal()">메뉴로 가기</button>`;
+                }
+            } else {
+                document.getElementById('resultTitle').innerText = "라운드 정리"; document.getElementById('resultMsg').innerText = "남은 카드를 다시 훈련합니다.";
+                btns.innerHTML = `<button class="btn-main btn-blue" onclick="resumeRound()">다음 라운드 진행</button>`;
+            }
+        }
+    }
+
+    function resumeRound() {
+        document.getElementById('modalOverlay').style.display = 'none';
+        pendingQueue = [...boxes.left, ...boxes.mid];
+        boxes.left = []; boxes.mid = [];
+        startRealtimeStopwatch(); nextCard();
+    }
+
+    function startNextCycle() {
+        document.getElementById('modalOverlay').style.display = 'none'; currentCycle++;
+        const badgeEl = document.getElementById('cycleBadge');
+        badgeEl.innerText = `${currentCycle}회독`; badgeEl.className = `progress-badge badge-cycle-${currentCycle}`;
+        document.getElementById('progressText').className = `progress-badge badge-cycle-${currentCycle}`;
+        document.getElementById('mainArea').className = `main-area cycle-${currentCycle}`;
+        
+        pendingQueue = [...activeWordData]; 
+        boxes = { left: [], mid: [], right: [] };
+        startRealtimeStopwatch(); nextCard();
+    }
+
+    /* ====== 엑셀(CSV) 한글 깨짐 방지 3열 파서 ====== */
+    function triggerCsvUpload() { document.getElementById('csvFileInput').click(); }
+    
+    function handleCsvUpload(ev) {
+        const f = ev.target.files[0]; if(!f) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const buffer = e.target.result;
+            const utf8Text = new TextDecoder('utf-8').decode(buffer);
+            const eucKrText = new TextDecoder('euc-kr').decode(buffer);
+            const utf8Match = (utf8Text.match(/[가-힣]/g) || []).length;
+            const eucKrMatch = (eucKrText.match(/[가-힣]/g) || []).length;
+            parseCSVText((eucKrMatch > utf8Match) ? eucKrText : utf8Text);
+        };
+        reader.readAsArrayBuffer(f);
+        ev.target.value = ''; 
+    }
+
+    function parseCSVText(text) {
+        text = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const rows = text.split('\n');
+        const data = [];
+        for(let i=0; i<rows.length; i++){
+            let row = rows[i].trim(); if(!row) continue;
+            const c = []; let curr = '', inQ = false;
+            for(let j=0; j<row.length; j++) {
+                if(row[j]==='"') inQ = !inQ; else if(row[j]===',' && !inQ) { c.push(curr); curr=''; } else curr += row[j];
+            }
+            c.push(curr);
+            
+            if(c.length >= 3){
+                let ch=c[0].trim().replace(/^"|"$/g, ''), 
+                    wo=c[1].trim().replace(/^"|"$/g, ''), 
+                    me=c.slice(2).join(',').trim().replace(/^"|"$/g, '');
+                if(i===0 && (ch.includes('단원')||wo.includes('단어'))) continue; 
+                if(ch && wo) data.push({chapter:ch, word:wo, meaning:me});
+            }
+        }
+        if(data.length>0){
+            originalWordData = data;
+            
+            let currentVal = document.getElementById('chapterSelect').value;
+            const chs = [...new Set(data.map(x=>x.chapter))];
+            const sel = document.getElementById('chapterSelect'); sel.innerHTML = '';
+            chs.forEach(x=>{ let o=document.createElement('option'); o.value=x; o.text=x; sel.appendChild(o); });
+            
+            let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+            let unsubmitted = h.find(x => x.submitted === false);
+            if (unsubmitted && chs.includes(unsubmitted.chapter)) {
+                sel.value = unsubmitted.chapter;
+            } else if (chs.includes(currentVal)) {
+                sel.value = currentVal;
+            }
+
+            document.getElementById('genFileBtn').disabled = false;
+            document.getElementById('genFileBtn').style.opacity = "1";
+            alert("업로드 성공! 이제 교재명을 입력하고 파일 제작 버튼을 누르세요.");
+        } else { alert("올바른 형식이 아닙니다. (단원, 단어, 뜻 3열 확인)"); }
+    }
+
+    /* --- 🔥 부가 메뉴 관리 및 미전송 단원 고정 로직 추가 --- */
+    function resetSessionAndShowModal() { 
+        currentSessionId = null; 
+        showStartModal(); 
+    }
+
+    function showStartModal() { 
+        clearInterval(globalStopwatch);
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('resultModal').classList.add('hidden');
+        document.getElementById('historyModal').classList.add('hidden');
+        document.getElementById('guideModal').classList.add('hidden');
+        
+        // 단원 목록 세팅 및 미전송 단원 자동 선택 로직 추가
+        const chs = [...new Set(originalWordData.map(x=>x.chapter))];
+        const sel = document.getElementById('chapterSelect'); 
+        sel.innerHTML = '';
+        chs.forEach(x=>{ let o=document.createElement('option'); o.value=x; o.text=x; sel.appendChild(o); });
+        
+        let h = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        let unsubmitted = h.find(x => x.submitted === false);
+        if (unsubmitted && chs.includes(unsubmitted.chapter)) {
+            sel.value = unsubmitted.chapter;
+        }
+
+        if (IS_STUDENT_VERSION) {
+            document.getElementById('adminModal').classList.add('hidden');
+            document.getElementById('startModal').classList.remove('hidden');
+            document.getElementById('studentBookTitle').innerText = textbookName;
+            
+            if (isLoggedIn) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('menuSection').classList.remove('hidden');
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('menuSection').classList.add('hidden');
+            }
+
+        } else {
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('startModal').classList.add('hidden');
+        }
+    }
+
+    function showGuideModal() {
+        document.getElementById('startModal').classList.add('hidden');
+        document.getElementById('guideModal').classList.remove('hidden');
+    }
+    
+    function closeGuideModal() {
+        document.getElementById('guideModal').classList.add('hidden');
+        document.getElementById('startModal').classList.remove('hidden');
+    }
+
+    function showHistory() {
+        clearInterval(globalStopwatch); updateSessionToStorage();
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('historyModal').classList.remove('hidden');
+        document.getElementById('startModal').classList.add('hidden');
+        document.getElementById('resultModal').classList.add('hidden');
+        document.getElementById('adminModal').classList.add('hidden');
+        document.getElementById('guideModal').classList.add('hidden');
+        
+        const list = document.getElementById('historyList'); list.innerHTML = '';
+        const history = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        if (history.length === 0) { list.innerHTML = '<tr><td colspan="7" style="padding:20px;">학습 기록이 없습니다.</td></tr>'; return; }
+
+        history.reverse().forEach(r => {
+            const d = r.data, t = d.time1 + d.time2 + d.time3 + d.time4;
+            const w = d.wrongWords.map(x => `<b>${x.word}</b> | ${x.meaning || ""}`).join('<br>') || '-';
+            list.innerHTML += `<tr style="border-bottom:1px solid #eee"><td>${r.chapter}<br><span style="font-size:10px;color:#999;">${r.date.split(' ')[1]||''}</span></td><td>${formatTimeKor(d.time1)}</td><td>${formatTimeKor(d.time2)}</td><td>${formatTimeKor(d.time3)}</td><td>${formatTimeKor(d.time4)}</td><td style="font-weight:bold; color:#e74c3c;">${formatTimeKor(t)}</td><td class="wrong-words-cell">${w}</td></tr>`;
+        });
+    }
+
+    function closeHistory() { document.getElementById('historyModal').classList.add('hidden'); showStartModal(); }
+    function syncLangAndUpdate() { isEnToKo = document.querySelector('input[name="topLang"]:checked').value === 'en2ko'; document.querySelector(`input[name="modalLang"][value="${isEnToKo?'en2ko':'ko2en'}"]`).checked = true; updateUI(); }
+    function clearAllHistory() { if(confirm("모든 기록을 삭제합니다.")) { localStorage.removeItem('leitnerHistory'); localStorage.removeItem('leitnerWrongWords'); alert("초기화되었습니다."); showHistory(); } }
+    
+    function exportToCSV() {
+        let history = JSON.parse(localStorage.getItem('leitnerHistory') || '[]');
+        if (history.length === 0) { alert("기록이 없습니다."); return; }
+        let csvContent = "\uFEFF학습일시,단원,1차 소요시간,2차 소요시간,3차 소요시간,4차 소요시간,총 소요시간,오답노트\n";
+        history.forEach(r => {
+            let d = r.data, t = d.time1 + d.time2 + d.time3 + d.time4, w = d.wrongWords.map(w => `${w.word}|${w.meaning || ""}`).join(' / ');
+            csvContent += `"${r.date}","${r.chapter}","${formatTimeKor(d.time1)}","${formatTimeKor(d.time2)}","${formatTimeKor(d.time3)}","${formatTimeKor(d.time4)}","${formatTimeKor(t)}","${w}"\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "학습기록.csv"; link.click();
+    }
+
+    /* --- 🔥 터치 및 마우스 제어 --- */
+    function start3Timer() {
+        let r = 3000; 
+        const b = document.getElementById('timerBar'); 
+        b.style.transition = 'none'; 
+        b.style.width = '100%';
+        setTimeout(() => { b.style.transition = 'width 3s linear'; b.style.width = '0%'; }, 50);
+        timer3Sec = setInterval(() => {
+            r -= 100; 
+            if (r <= 0) {
+                clearInterval(timer3Sec); 
+                speak("Time over"); 
+                if (!isFlipped) flipCard(); 
+                setTimeout(() => fly('left'), 1000);
+            }
+        }, 100);
+    }
+
+    const swipeWrap = document.getElementById('swipeWrapper');
+    let isDragging = false, startX = 0, startY = 0, curX = 0, curY = 0;
+    
+    swipeWrap.addEventListener('pointerdown', e => { 
+        if (isAnimating) return; 
+        isDragging = true; 
+        startX = e.clientX; 
+        startY = e.clientY; 
+        curX = 0; 
+        curY = 0;
+        swipeWrap.style.transition = 'none'; 
+        swipeWrap.style.cursor = 'grabbing';
+        swipeWrap.setPointerCapture(e.pointerId); 
+    });
+    
+    swipeWrap.addEventListener('pointermove', e => { 
+        if (!isDragging || isAnimating || (!isFlipped && mode !== 1)) return; 
+        curX = e.clientX - startX; 
+        curY = e.clientY - startY; 
+        swipeWrap.style.transform = `translate(${curX}px, ${curY}px) rotate(${curX * 0.05}deg)`; 
+    });
+    
+    swipeWrap.addEventListener('pointerup', e => {
+        if (!isDragging || isAnimating) return; 
+        isDragging = false; 
+        swipeWrap.style.cursor = 'grab';
+        swipeWrap.releasePointerCapture(e.pointerId);
+        
+        const dist = Math.hypot(curX, curY);
+        if (dist < 15) { 
+            if (!isFlipped) flipCard(); 
+            else if (mode === 1) fly('left'); 
+            return; 
+        }
+        
+        if (mode === 1) fly('left'); 
+        else if (!isFlipped) { 
+            swipeWrap.style.transition = '0.3s'; 
+            swipeWrap.style.transform = 'translate(0,0)'; 
+        }
+        else if (curX > 80) fly('right'); 
+        else if (curX < -80) fly('left'); 
+        else if (curY < -80) fly('mid'); 
+        else { 
+            swipeWrap.style.transition = '0.3s'; 
+            swipeWrap.style.transform = 'translate(0,0)'; 
+        }
+    });
+
+    function flipCard() { 
+        isFlipped = true; 
+        document.getElementById('wordCard').classList.add('is-flipped'); 
+        if (mode === 1) document.getElementById('frontGuide').innerText = "밀어서 다음 단어로";
+        
+        if (!isEnToKo) speak(currentWord.word); // 뜻->어휘 모드일 때 뒷면(영어) 발음
+    }
+    
+    function fly(dir) {
+        if (isAnimating) return;
+        isAnimating = true; 
+        clearInterval(timer3Sec);
+        
+        if (mode === 3 || mode === 4) { 
+            if (dir === 'right') sessionData.p3Stats.right++; 
+            else if (dir === 'mid') sessionData.p3Stats.mid++; 
+            else sessionData.p3Stats.left++;
+            
+            if (dir !== 'right' && !sessionData.wrongWords.some(x => x.word === currentWord.word)) {
+                sessionData.wrongWords.push({...currentWord});
+            }
+        }
+        
+        if (dir === 'right') boxes.right.push(currentWord); 
+        else if (dir === 'left') boxes.left.push(currentWord); 
+        else boxes.mid.push(currentWord); 
+        
+        swipeWrap.style.transition = 'transform 0.4s ease-out, opacity 0.3s'; 
+        swipeWrap.style.opacity = '0';
+        let tx = (dir === 'right' ? 500 : (dir === 'left' ? -500 : 0));
+        let ty = (dir === 'mid' ? -600 : 0);
+        swipeWrap.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx * 0.1}deg)`;
+        
+        setTimeout(() => {
+            try { nextCard(); } catch(e) { console.error(e); } finally { isAnimating = false; }
+        }, 350);
+    }
+    
+    window.addEventListener('resize', () => { if(isFlipped || !isAnimating) updateUI(); });
+
+</script>
+
+</body></html>
